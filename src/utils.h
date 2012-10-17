@@ -25,3 +25,4 @@
 
 
 Eigen::Affine3f affineFromPlane(pcl::ModelCoefficients::Ptr coe);
+Eigen::Quaternionf rotationFromAffine(Eigen::Affine3f aff);

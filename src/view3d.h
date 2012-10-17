@@ -47,32 +47,38 @@ class View3D {
         typedef pcl::PointCloud<PointT> PointCloud;
         typedef typename PointCloud::Ptr PointCloudPtr;
         typedef typename PointCloud::ConstPtr PointCloudConstPtr;
+        
+        friend void keyboardCallback(const pcl::visualization::KeyboardEvent&, void*);
+
+        enum InteractionState {
+            START,
+            GRAB,
+            GRABX,
+            GRABY,
+            GRABZ,
+            SCALE,
+            SCALEX,
+            SCALEY,
+            SCALEZ,
+        };
 
 
         View3D() {
             visualizer.addCoordinateSystem(1.0);
             registerCallbacks();
 
-            /* init the selection cube */
-            /*
-            cubeCoe.values.resize(9);
-            // translation
-            cubeCoe.values[0] = 0;
-            cubeCoe.values[1] = 0;
-            cubeCoe.values[2] = 0;
-            // rotation
-            cubeCoe.values[3] = 0;
-            cubeCoe.values[4] = 0;
-            cubeCoe.values[5] = 0;
-            // width, height, depth
-            cubeCoe.values[6] = 1;
-            cubeCoe.values[7] = 1;
-            cubeCoe.values[8] = 0;
-            */
+            cloudTransform.setIdentity();
+            //cloudTransform.rotate(Eigen::AngleAxisf(1.5707963267948966,
+            //            Eigen::Vector3f(1.0, 0.0, 0.0)));
 
             //visualizer.addCube(cubeCoe);
-            visualizer.addCube(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 1, 0, 0);
+            cube_x = cube_y = cube_z = 0.0;
+            cube_sx = cube_sy = cube_sz = 0.5;
+            updateSelectionCube();
 
+            // interaction and flags
+            state = START;
+            flagCaptureFloor = false;
         }
 
         void spinOnce();
@@ -85,10 +91,18 @@ class View3D {
     private:
 
         pcl::visualization::PCLVisualizer visualizer;
-        PointCloudConstPtr mainCloud;
-        pcl::ModelCoefficients cubeCoe;
-
         void registerCallbacks();
+
+        PointCloudConstPtr mainCloud;
+        Eigen::Affine3f cloudTransform;
+        pcl::visualization::PointCloudGeometryHandler<PointT>::ConstPtr gemHandl;
+
+        float cube_x, cube_y, cube_z, cube_sx, cube_sy, cube_sz;
+        void updateSelectionCube();
+        float edit_stepsize = 0.025;
+
+
+        InteractionState state;
 
 };
 
