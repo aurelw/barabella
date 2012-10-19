@@ -31,6 +31,8 @@
 #include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/visualization/image_viewer.h>
 
+#include "selection_cube.h"
+
 
 #ifndef __VIEWED_H__
 #define __VIEWED_H__
@@ -71,12 +73,7 @@ class View3D {
             //cloudTransform.rotate(Eigen::AngleAxisf(1.5707963267948966,
             //            Eigen::Vector3f(1.0, 0.0, 0.0)));
 
-            //visualizer.addCube(cubeCoe);
-            cube_x = cube_y = cube_z = 0.0;
-            cube_sx = cube_sy = cube_sz = 0.5;
-            updateSelectionCube();
-
-            // interaction and flags
+            /* interaction and flags */
             state = START;
             flagCaptureFloor = false;
         }
@@ -85,6 +82,7 @@ class View3D {
         void updateCloud(PointCloudConstPtr cloud);
         void addCloud(PointCloudConstPtr cloud);
         void setFloor(pcl::ModelCoefficients::Ptr coefficients);
+        void setCube(SelectionCube* cube);
 
         bool flagCaptureFloor;
 
@@ -97,16 +95,14 @@ class View3D {
         Eigen::Affine3f cloudTransform;
         pcl::visualization::PointCloudGeometryHandler<PointT>::ConstPtr gemHandl;
 
-        float cube_x, cube_y, cube_z, cube_sx, cube_sy, cube_sz;
+        SelectionCube* sCube;
+        void moveCube(float dx, float dy, float dz);
         void updateSelectionCube();
         float edit_stepsize = 0.025;
 
-
         InteractionState state;
-
 };
 
 
 #endif
-
 

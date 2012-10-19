@@ -17,30 +17,26 @@
  *   along with Barabella.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string>
 
-#include <pcl/common/common_headers.h>
-#include <pcl/console/parse.h>
+#include "update_signal.h"
 
-#ifndef __GLOBAL_OPTIONS_H__
-#define __GLOBAL_OPTIONS_H__
-
-
-class GlobalOptions {
-
-    public:
-        
-        GlobalOptions(int argc, char** argv) {
-            doRecording = pcl::console::find_switch(argc, argv, "-r");
-            doPlayBack =  pcl::console::find_switch(argc, argv, "-p");
-            clipDirectory = "/tmp/foobar/";
-        }
-
-        bool doRecording;
-        bool doPlayBack;
-        std::string clipDirectory;
-
-};
-
+UpdateSignal::connection_t UpdateSignal::connect(signal_t::slot_function_type subscriber) {
+#ifdef BB_FLOOD
+   std::cout << "slot connected" << std::endl;
 #endif
+    return m_sig.connect(subscriber);
+}
+
+
+void UpdateSignal::disconnect(connection_t subscriber) {
+    subscriber.disconnect();
+}
+
+
+void UpdateSignal::update() {
+   m_sig(); 
+#ifdef BB_FLOOD
+   std::cout << "update()" << std::endl;
+#endif
+}
 

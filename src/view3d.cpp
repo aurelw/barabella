@@ -56,8 +56,6 @@ void View3D::setFloor(pcl::ModelCoefficients::Ptr coefficients) {
     visualizer.removeShape("floor_line");
     visualizer.addLine(p0, p1, "floor_line");
 
-    updateSelectionCube();
-
     /* transform the main cloud */
     // doesn't work as expected, only for PointCloud2 Foo 
     /*
@@ -78,27 +76,18 @@ void View3D::setFloor(pcl::ModelCoefficients::Ptr coefficients) {
 
 
 void View3D::updateSelectionCube() {
+#ifdef BB_FLOOD
+    std::cout << "View3D::updateSelectionCube" << std::endl;
+#endif
     visualizer.removeShape("selection_cube");
-    /*
-    visualizer.addCube(cube_x - cube_sx, 
-                       cube_x + cube_sx,
-                       cube_y - cube_sy,
-                       cube_y + cube_sy,
-                       cube_z - cube_sz,
-                       cube_z + cube_sz,
-                       1.0, 0.0, 0.0,
-                       "selection_cube");
-                    */
-    //FIXME rotate translation part
-    Eigen::Vector3f pos(cube_x, cube_y, cube_z);
-    Eigen::Quaternionf rotation(cloudTransform.rotation());
-    visualizer.addCube(pos,
-            rotation,
-            cube_sx,
-            cube_sy,
-            cube_sz,
+    visualizer.addCube(sCube->getGlobalPosition(),
+            sCube->getGlobalRotation(),
+            sCube->getSx(),
+            sCube->getSy(),
+            sCube->getSz(),
             "selection_cube");
 }
+
 
 void View3D::registerCallbacks() {
     visualizer.registerKeyboardCallback(keyboardCallback, (void*) this);
@@ -144,31 +133,25 @@ void keyboardCallback(const pcl::visualization::KeyboardEvent &event,
 
             case View3D::GRABX:
                 if (keysym == "Up") {
-                    view3d->cube_x += view3d->edit_stepsize;
-                    view3d->updateSelectionCube();
+                    view3d->moveCube(view3d->edit_stepsize, 0, 0);
                 } else if (keysym == "Down") {
-                    view3d->cube_x -= view3d->edit_stepsize;
-                    view3d->updateSelectionCube();
+                    view3d->moveCube(-view3d->edit_stepsize, 0, 0);
                 }
                 break;
 
             case View3D::GRABY:
                 if (keysym == "Up") {
-                    view3d->cube_y += view3d->edit_stepsize;
-                    view3d->updateSelectionCube();
+                    view3d->moveCube(0, view3d->edit_stepsize, 0);
                 } else if (keysym == "Down") {
-                    view3d->cube_y -= view3d->edit_stepsize;
-                    view3d->updateSelectionCube();
+                    view3d->moveCube(0, -view3d->edit_stepsize, 0);
                 }
                 break;
 
             case View3D::GRABZ:
                 if (keysym == "Up") {
-                    view3d->cube_z += view3d->edit_stepsize;
-                    view3d->updateSelectionCube();
+                    view3d->moveCube(0, 0, view3d->edit_stepsize);
                 } else if (keysym == "Down") {
-                    view3d->cube_z -= view3d->edit_stepsize;
-                    view3d->updateSelectionCube();
+                    view3d->moveCube(0, 0, -view3d->edit_stepsize);
                 }
                 break;
 
@@ -184,31 +167,37 @@ void keyboardCallback(const pcl::visualization::KeyboardEvent &event,
 
             case View3D::SCALEX:
                 if (keysym == "Up") {
-                    view3d->cube_sx += view3d->edit_stepsize;
-                    view3d->updateSelectionCube();
+                    view3d->sCube->setSx( 
+                            view3d->sCube->getSx() +
+                            view3d->edit_stepsize);
                 } else if (keysym == "Down") {
-                    view3d->cube_sx -= view3d->edit_stepsize;
-                    view3d->updateSelectionCube();
+                    view3d->sCube->setSx( 
+                            view3d->sCube->getSx() -
+                            +view3d->edit_stepsize);
                 }
                 break;
 
             case View3D::SCALEY:
                 if (keysym == "Up") {
-                    view3d->cube_sy += view3d->edit_stepsize;
-                    view3d->updateSelectionCube();
+                    view3d->sCube->setSy( 
+                            view3d->sCube->getSy() +
+                            view3d->edit_stepsize);
                 } else if (keysym == "Down") {
-                    view3d->cube_sy -= view3d->edit_stepsize;
-                    view3d->updateSelectionCube();
+                    view3d->sCube->setSy( 
+                            view3d->sCube->getSy() -
+                            view3d->edit_stepsize);
                 }
                 break;
 
             case View3D::SCALEZ:
                 if (keysym == "Up") {
-                    view3d->cube_sz += view3d->edit_stepsize;
-                    view3d->updateSelectionCube();
+                    view3d->sCube->setSz( 
+                            view3d->sCube->getSz() +
+                            view3d->edit_stepsize);
                 } else if (keysym == "Down") {
-                    view3d->cube_sz -= view3d->edit_stepsize;
-                    view3d->updateSelectionCube();
+                    view3d->sCube->setSz( 
+                            view3d->sCube->getSz() -
+                            view3d->edit_stepsize);
                 }
                 break;
 
@@ -224,5 +213,22 @@ void keyboardCallback(const pcl::visualization::KeyboardEvent &event,
         /**********************/
     }
 
+}
+
+
+void View3D::setCube(SelectionCube* cube) {
+    sCube = cube;
+    updateSelectionCube();
+    // connect signal to slot
+    sCube->connect(boost::bind(&View3D::updateSelectionCube, this));
+}
+
+
+void View3D::moveCube(float dx, float dy, float dz) {
+    Eigen::Vector3f pos = sCube->getPosition();
+    pos[0] += dx;
+    pos[1] += dy;
+    pos[2] += dz;
+    sCube->setPosition(pos);
 }
 

@@ -16,29 +16,32 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Barabella.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <iostream>
 
-#include <string>
+#include <boost/signals.hpp>
+#include <boost/bind.hpp>
+#include <boost/signals/connection.hpp>
 
 #include <pcl/common/common_headers.h>
-#include <pcl/console/parse.h>
 
-#ifndef __GLOBAL_OPTIONS_H__
-#define __GLOBAL_OPTIONS_H__
+#include "barabella_config.h"
 
+#ifndef __UPDATE_SIGNAL_H__
+#define __UPDATE_SIGNAL_H__
 
-class GlobalOptions {
+class UpdateSignal {
+
+    public: 
+        typedef boost::signal<void ()>  signal_t;
+        typedef boost::signals::connection  connection_t;
 
     public:
-        
-        GlobalOptions(int argc, char** argv) {
-            doRecording = pcl::console::find_switch(argc, argv, "-r");
-            doPlayBack =  pcl::console::find_switch(argc, argv, "-p");
-            clipDirectory = "/tmp/foobar/";
-        }
+        connection_t connect(signal_t::slot_function_type subscriber);
+        void disconnect(connection_t subscriber);
 
-        bool doRecording;
-        bool doPlayBack;
-        std::string clipDirectory;
+    protected:
+        signal_t m_sig;
+        virtual void update();
 
 };
 

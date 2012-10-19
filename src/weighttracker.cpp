@@ -45,26 +45,34 @@ int main (int argc, char** argv) {
         BARABELLA_VERSION << std::endl;
 #endif
 
+    /* global options */
     GlobalOptions options(argc, argv);
 
+    /* streaming */
     KinectInterface kinIface;
-    View3D view3d;
 
+    /* visualization */
+    View3D view3d;
     pcl::PointCloud<PointType>::ConstPtr cloudptr;
     pcl::PointCloud<PointType>::Ptr transCloud (new pcl::PointCloud<PointType>);
     cloudptr = kinIface.getLastCloud();
     view3d.addCloud(cloudptr);
 
+    /* set up an selection cube */
+    SelectionCube sCube;
+    view3d.setCube(&sCube);
+
+    /* floor extraction */
     FloorExtractor floorEx;
     pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients ());
     Eigen::Affine3f cloudTransform;
 
+    /* clip recording and playback */
     Clip clip;
     clip.setDirectory(options.clipDirectory);
     if (options.doRecording) {
         clip.startRecording(&kinIface);
     }
-
     if (options.doPlayBack) {
         clip.load();
         clip.begin();
@@ -90,7 +98,8 @@ int main (int argc, char** argv) {
             floorEx.setInputCloud(cloudptr);
             floorEx.extract(coefficients);
             view3d.setFloor(coefficients);
-            cloudTransform = affineFromPlane(coefficients).inverse();
+            cloudTransform = affineFromPlane(coefficients);
+            sCube.setCoordinateFrame(cloudTransform);
         }
     }
     
