@@ -30,6 +30,8 @@
 #include "utils.h"
 #include "floor_extractor.h"
 #include "barabella_config.h"
+#include "clip.h"
+#include "global_options.h"
 
 
 
@@ -43,6 +45,8 @@ int main (int argc, char** argv) {
         BARABELLA_VERSION << std::endl;
 #endif
 
+    GlobalOptions options(argc, argv);
+
     KinectInterface kinIface;
     View3D view3d;
 
@@ -55,6 +59,17 @@ int main (int argc, char** argv) {
     pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients ());
     Eigen::Affine3f cloudTransform;
 
+    Clip clip;
+    clip.setDirectory(options.clipDirectory);
+    if (options.doRecording) {
+        clip.startRecording(&kinIface);
+    }
+
+    if (options.doPlayBack) {
+        clip.load();
+        clip.begin();
+    }
+
 #ifdef BB_LOG 
     std::cout << "Enter Main Loop" << std::endl;
 #endif
@@ -64,7 +79,11 @@ int main (int argc, char** argv) {
              
 
         view3d.spinOnce();
-        view3d.updateCloud(cloudptr);
+        if (options.doPlayBack) {
+            view3d.updateCloud(clip.next());
+        } else {
+            view3d.updateCloud(cloudptr);
+        }
 
         if (view3d.flagCaptureFloor) {
             view3d.flagCaptureFloor = false;

@@ -19,10 +19,14 @@
 
 #include "kinect_interface.h"
 
+#include <boost/foreach.hpp>
 
 
 void KinectInterface::cloud_callback(const CloudConstPtr &cld) {
     cloud = cld;
+    BOOST_FOREACH (FrameObserver* obs, observers) {
+        obs->frameEvent(cloud);
+    }
 }
 
 
@@ -43,6 +47,12 @@ void KinectInterface::setupGrabber() {
     boost::function<void (const CloudConstPtr&) > cloud_cb = boost::bind (&KinectInterface::cloud_callback, this, _1);
     grabber->registerCallback(cloud_cb);
 
-    // start stream
+    // start 
     grabber->start();
 }
+
+
+void KinectInterface::registerObserver(FrameObserver* obs) {
+    observers.push_back(obs);
+}
+

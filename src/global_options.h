@@ -17,16 +17,25 @@
  *   along with Barabella.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <iostream>
+#include <string>
 
-#include <pcl/point_types.h>
-#include <pcl/ModelCoefficients.h>
+#include <pcl/common/common_headers.h>
+#include <pcl/console/parse.h>
 
-#ifndef __UTILS_H__
-#define __UTILS_H__
 
-Eigen::Affine3f affineFromPlane(pcl::ModelCoefficients::Ptr coe);
-Eigen::Quaternionf rotationFromAffine(Eigen::Affine3f aff);
+class GlobalOptions {
 
-#endif
+    public:
+        
+        GlobalOptions(int argc, char** argv) {
+            doRecording = pcl::console::find_switch(argc, argv, "-r");
+            doPlayBack =  pcl::console::find_switch(argc, argv, "-p");
+            clipDirectory = "/tmp/foobar/";
+        }
+
+        bool doRecording;
+        bool doPlayBack;
+        std::string clipDirectory;
+
+};
+

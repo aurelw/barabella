@@ -19,11 +19,14 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <vector>
 
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/io/openni_grabber.h>
 #include <pcl/io/openni_camera/openni_driver.h>
+
+#include "frame_observer.h"
 
 
 #ifndef __KINECT_INTERFACE_H__
@@ -47,6 +50,8 @@ class KinectInterface {
 
         CloudConstPtr getLastCloud();
 
+        void registerObserver(FrameObserver* obs);
+
     private:
         void setupGrabber();
         void cloud_callback(const CloudConstPtr& cld);
@@ -54,6 +59,7 @@ class KinectInterface {
         pcl::OpenNIGrabber *grabber;
         CloudConstPtr cloud;
 
+        std::vector<FrameObserver*> observers;
 };
 
 #endif

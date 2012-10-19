@@ -17,16 +17,4 @@
  *   along with Barabella.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <iostream>
-
-#include <pcl/point_types.h>
-#include <pcl/ModelCoefficients.h>
-
-#ifndef __UTILS_H__
-#define __UTILS_H__
-
-Eigen::Affine3f affineFromPlane(pcl::ModelCoefficients::Ptr coe);
-Eigen::Quaternionf rotationFromAffine(Eigen::Affine3f aff);
-
-#endif
+#include "global_options.h"
