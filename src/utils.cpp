@@ -20,6 +20,7 @@
 #include "utils.h"
 
 Eigen::Affine3f affineFromPlane(pcl::ModelCoefficients::Ptr coe) {
+    //FIXME might not be correct. tiny rotation offest!
     float x = -coe->values[0];    
     float y = -coe->values[1];    
     float z = -coe->values[2];    

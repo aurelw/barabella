@@ -24,18 +24,7 @@
 #include <pcl/point_types.h>
 #include <pcl/ModelCoefficients.h>
 
-
-#include "kinect_interface.h"
-#include "view3d.h"
-#include "utils.h"
-#include "floor_extractor.h"
-#include "barabella_config.h"
-#include "clip.h"
-#include "global_options.h"
-
-
-
-typedef pcl::PointXYZRGBA PointType;
+#include "barabella_app.h"
 
 
 int main (int argc, char** argv) {
@@ -48,26 +37,11 @@ int main (int argc, char** argv) {
     /* global options */
     GlobalOptions options(argc, argv);
 
-    /* streaming */
-    KinectInterface kinIface;
-
-    /* visualization */
-    View3D view3d;
-    pcl::PointCloud<PointType>::ConstPtr cloudptr;
-    pcl::PointCloud<PointType>::Ptr transCloud (new pcl::PointCloud<PointType>);
-    cloudptr = kinIface.getLastCloud();
-    view3d.addCloud(cloudptr);
-
-    /* set up an selection cube */
-    SelectionCube sCube;
-    view3d.setCube(&sCube);
-
-    /* floor extraction */
-    FloorExtractor floorEx;
-    pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients ());
-    Eigen::Affine3f cloudTransform;
+    /* the app */
+    BarabellaApp app(&options);
 
     /* clip recording and playback */
+    /*
     Clip clip;
     clip.setDirectory(options.clipDirectory);
     if (options.doRecording) {
@@ -77,30 +51,19 @@ int main (int argc, char** argv) {
         clip.load();
         clip.begin();
     }
+    */
 
-#ifdef BB_LOG 
-    std::cout << "Enter Main Loop" << std::endl;
-#endif
     while (true) {
-        cloudptr = kinIface.getLastCloud();
-        //pcl::transformPointCloud<PointType>(*cloudptr, *transCloud, cloudTransform);
-             
-
-        view3d.spinOnce();
-        if (options.doPlayBack) {
-            view3d.updateCloud(clip.next());
-        } else {
-            view3d.updateCloud(cloudptr);
+        app.spinOnce();
+/*
+        if (view3d.flagExtractTemplate) {
+            view3d.flagExtractTemplate = false;
+            templateCloud = sCube.filterCloud(*cloudptr);
+            view3d.addTemplate(templateCloud);
+            view3d.setDrawMode(View3D::TEMPLATE);
+            displayTemplate = true;
         }
-
-        if (view3d.flagCaptureFloor) {
-            view3d.flagCaptureFloor = false;
-            floorEx.setInputCloud(cloudptr);
-            floorEx.extract(coefficients);
-            view3d.setFloor(coefficients);
-            cloudTransform = affineFromPlane(coefficients);
-            sCube.setCoordinateFrame(cloudTransform);
-        }
+    */
     }
     
 

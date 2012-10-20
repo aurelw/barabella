@@ -43,13 +43,15 @@ class KinectInterface {
         typedef typename Cloud::ConstPtr CloudConstPtr;
 
 
-        KinectInterface() {
+        KinectInterface() :
+            isStreaming(false)
+        {
             setupGrabber();
         }
 
 
+        void waitForFirstFrame();
         CloudConstPtr getLastCloud();
-
         void registerObserver(FrameObserver* obs);
 
     private:
@@ -60,6 +62,7 @@ class KinectInterface {
         CloudConstPtr cloud;
 
         std::vector<FrameObserver*> observers;
+        bool isStreaming;
 };
 
 #endif

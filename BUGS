@@ -1,0 +1,2 @@
+View3D:
+    Coordinate frames drawn with a Affine3f seem to have wrong rotation.

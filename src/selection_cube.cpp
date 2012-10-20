@@ -19,6 +19,8 @@
 
 #include "selection_cube.h"
 
+#include <pcl/filters/crop_box.h>
+
 Eigen::Vector3f SelectionCube::getPosition() {
     return position;
 }
@@ -86,4 +88,37 @@ Eigen::Quaternionf SelectionCube::getGlobalRotation() {
     Eigen::Quaternionf quat(coordinateFrame.rotation());
     return quat;
 }
+
+
+SelectionCube::PointCloudPtr SelectionCube::filterCloud(const PointCloud& cloud) {
+    /* compile transformation matrix for unit cube */
+    Eigen::Affine3f t = coordinateFrame;
+    Eigen::Vector3f scalev(scaleX, scaleY, scaleZ);
+    t.translate(position);
+    t.scale(scalev);
+
+    /* filter */
+    //the unit cube
+    pcl::CropBox<PointT> crop;
+    //FIXME copy point cloud here for bug workaround in ~CropBox
+    PointCloudConstPtr cloudptr(new PointCloud(cloud));
+    crop.setInputCloud(cloudptr);
+    Eigen::Vector4f minp(-0.5, -0.5, -0.5, 0.0);
+    Eigen::Vector4f maxp(0.5, 0.5, 0.5, 0.0);
+    crop.setMin(minp);
+    crop.setMax(maxp);
+    // transform pointcloud (not the cube)
+    crop.setTransform(t.inverse());
+    // filter cloud 
+    PointCloudPtr cloud_out(new PointCloud);
+    crop.filter(*cloud_out);
+
+#ifdef BB_VERBOSE
+    std::cout << "SelectionCube extracted: " << cloud_out->size() << " indices"
+        << std::endl;
+#endif
+
+    return cloud_out;
+}
+
 

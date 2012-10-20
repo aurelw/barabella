@@ -64,6 +64,11 @@ class View3D {
             SCALEZ,
         };
 
+        enum DrawMode {
+            NORMAL,
+            TEMPLATE,
+        };
+
 
         View3D() {
             visualizer.addCoordinateSystem(1.0);
@@ -76,6 +81,7 @@ class View3D {
             /* interaction and flags */
             state = START;
             flagCaptureFloor = false;
+            flagExtractTemplate = false;
         }
 
         void spinOnce();
@@ -84,22 +90,34 @@ class View3D {
         void setFloor(pcl::ModelCoefficients::Ptr coefficients);
         void setCube(SelectionCube* cube);
 
+        void addTemplate(PointCloudConstPtr cloud);
+
+        void setDrawMode(DrawMode mode);
+
         bool flagCaptureFloor;
+        bool flagExtractTemplate;
 
     private:
 
+        /* pcl visualizer */
         pcl::visualization::PCLVisualizer visualizer;
         void registerCallbacks();
 
+        /* the raw main cloud */
         PointCloudConstPtr mainCloud;
         Eigen::Affine3f cloudTransform;
         pcl::visualization::PointCloudGeometryHandler<PointT>::ConstPtr gemHandl;
 
+        /* a selection cube */
         SelectionCube* sCube;
         void moveCube(float dx, float dy, float dz);
         void updateSelectionCube();
         float edit_stepsize = 0.025;
 
+        /* template */
+        PointCloudConstPtr templateCloud;
+
+        /* user input and draw states */
         InteractionState state;
 };
 

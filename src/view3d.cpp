@@ -28,14 +28,36 @@ void View3D::spinOnce() {
 
 
 void View3D::updateCloud(PointCloudConstPtr cloud) {
-    visualizer.updatePointCloud(cloud, "mainCloud");
     mainCloud = cloud;
+    visualizer.updatePointCloud(mainCloud, "mainCloud");
 }
 
 
 void View3D::addCloud(PointCloudConstPtr cloud) {
-    visualizer.addPointCloud(cloud, "mainCloud");
     mainCloud = cloud;
+    visualizer.addPointCloud(mainCloud, "mainCloud");
+}
+
+
+void View3D::addTemplate(PointCloudConstPtr cloud) {
+    visualizer.removePointCloud("templateCloud");
+    templateCloud = cloud;
+}
+
+
+void View3D::setDrawMode(DrawMode mode) {
+    visualizer.removePointCloud("templateCloud");
+    visualizer.removePointCloud("mainCloud");
+
+    switch (mode) {
+        case NORMAL:
+            visualizer.addPointCloud(mainCloud, "mainCloud");
+            break;
+        case TEMPLATE:
+            visualizer.addPointCloud(templateCloud, "templateCloud");
+            break;
+    }
+
 }
 
 
@@ -105,6 +127,8 @@ void keyboardCallback(const pcl::visualization::KeyboardEvent &event,
         /* flags which are checked externaly */
         if (keysym == "c") {
             view3d->flagCaptureFloor = true;
+        } else if (keysym == "t") {
+            view3d->flagExtractTemplate = true;
         }
 
 #ifdef BB_VERBOSE

@@ -17,15 +17,25 @@
  *   along with Barabella.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
+
 #include <pcl/common/common_headers.h>
 
 #include "update_signal.h"
+#include "barabella_config.h"
+
 
 #ifndef __SELECTION_CUBE_H__
 #define __SELECTION_CUBE_H__
 
 
 class SelectionCube : public UpdateSignal {
+
+    public:
+        typedef pcl::PointXYZRGBA PointT;
+        typedef pcl::PointCloud<PointT> PointCloud;
+        typedef typename PointCloud::Ptr PointCloudPtr;
+        typedef typename PointCloud::ConstPtr PointCloudConstPtr;
 
     public:
 
@@ -35,6 +45,7 @@ class SelectionCube : public UpdateSignal {
         {
         }
 
+        /* local transformations */
         Eigen::Vector3f getPosition();
         float getSx();
         float getSy();
@@ -50,6 +61,10 @@ class SelectionCube : public UpdateSignal {
         Eigen::Affine3f getCoordinateFrame();
         Eigen::Vector3f getGlobalPosition();
         Eigen::Quaternionf getGlobalRotation();
+
+        /* filtering */
+        PointCloudPtr filterCloud(const PointCloud& cloud);
+
 
     private:
 
