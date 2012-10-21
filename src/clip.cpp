@@ -68,6 +68,13 @@ void Clip::frameEvent(PointCloudConstPtr cloud) {
         //copy the cloud
         //FIXME buffer
         //PointCloudPtr frame ( new PointCloud(*cloud));
+
+#ifdef BB_VERBOSE
+        std::cout << "recorded frame - stamp/seq/id: " << 
+            cloud->header.stamp    << "/" << 
+            cloud->header.seq      << "/" << 
+            cloud->header.frame_id << std::endl;
+#endif
         
         /* the filename */
         stringstream ss;

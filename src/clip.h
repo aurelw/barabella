@@ -54,6 +54,9 @@ class Clip : public FrameObserver {
         PointCloudPtr next();
         bool end();
 
+        /* addition clip info */
+        long frameTimestamp();
+        
 
         void frameEvent(PointCloudConstPtr cloud);
 
