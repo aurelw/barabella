@@ -34,7 +34,7 @@
 
 
 
-class KinectInterface {
+class KinectInterface : public FrameProvider {
 
     public:
 
@@ -52,7 +52,6 @@ class KinectInterface {
 
         void waitForFirstFrame();
         CloudConstPtr getLastCloud();
-        void registerObserver(FrameObserver* obs);
 
     private:
         void setupGrabber();
@@ -61,7 +60,6 @@ class KinectInterface {
         pcl::OpenNIGrabber *grabber;
         CloudConstPtr cloud;
 
-        std::vector<FrameObserver*> observers;
         bool isStreaming;
 };
 

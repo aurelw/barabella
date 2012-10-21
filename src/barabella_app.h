@@ -32,6 +32,7 @@
 #include "barabella_config.h"
 #include "clip.h"
 #include "global_options.h"
+#include "clip_player.h"
 
 
 #ifndef __BARABELLA_APP_H__
@@ -63,6 +64,21 @@ class BarabellaApp {
             initView3d();
             initTemplates();
             operationMode = STREAMING;
+
+            /* FIXME player test */
+            clip = new Clip();
+            clip->setDirectory(gOptions->clipDirectory);
+
+            if (gOptions->doRecording) {
+                clip->startRecording(&kinIface);
+            }
+
+            if (gOptions->doPlayBack) {
+                clipPlayer.setClip(clip);
+                clipPlayer.start();
+                operationMode = CLIPPLAYBACK;
+            }
+
         }
 
         void spinOnce();
@@ -106,6 +122,7 @@ class BarabellaApp {
 
         /* recording */
         Clip* clip;
+        ClipPlayer clipPlayer;
 
 };
 

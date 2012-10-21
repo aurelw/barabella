@@ -20,7 +20,6 @@
 #include "barabella_app.h"
 
 
-
 void BarabellaApp::initView3d() {
     view3d.setCube(&sCube);
     mainCloud = kinIface.getLastCloud();
@@ -90,6 +89,9 @@ void BarabellaApp::spinStreaming() {
 
 
 void BarabellaApp::spinClipPlayBack() {
+    mainCloud = clipPlayer.getLastCloud();
+    view3d.updateCloud(mainCloud);
+    view3d.spinOnce();
 }
 
 

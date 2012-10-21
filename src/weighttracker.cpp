@@ -40,26 +40,9 @@ int main (int argc, char** argv) {
     /* the app */
     BarabellaApp app(&options);
 
-    /* clip recording and playback */
-    /*
-    Clip clip;
-    clip.setDirectory(options.clipDirectory);
-    if (options.doRecording) {
-        clip.startRecording(&kinIface);
-    }
-    if (options.doPlayBack) {
-        clip.load();
-        clip.begin();
-    }
-    */
-
     while (true) {
         app.spinOnce();
     }
-    
-
-
-
     
     return (0);
 }

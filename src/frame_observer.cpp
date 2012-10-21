@@ -1,3 +1,4 @@
+
 /*
  *   (C) 2012, Aurel Wildfellner
  *
@@ -17,40 +18,19 @@
  *   along with Barabella.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <pcl/common/common_headers.h>
+#include "frame_observer.h"
+
+#include <boost/foreach.hpp>
 
 
-#ifndef __FRAME_OBSERVER_H__
-#define __FRAME_OBSERVER_H__
+void FrameProvider::registerObserver(FrameObserver* observer) {
+    observers.push_back(observer);
+}
 
 
-class FrameObserver {
-
-    public:
-
-        typedef pcl::PointXYZRGBA PointType;
-        typedef pcl::PointCloud<PointType> Cloud;
-        typedef typename Cloud::ConstPtr CloudConstPtr;
-
-        virtual void frameEvent(CloudConstPtr) = 0;
-
-};
-
-
-class FrameProvider {
-    public:
-
-        typedef pcl::PointXYZRGBA PointType;
-        typedef pcl::PointCloud<PointType> Cloud;
-        typedef typename Cloud::ConstPtr CloudConstPtr;
-
-        void registerObserver(FrameObserver* observer);
-
-    protected:
-
-        void frameEvent(CloudConstPtr cloud);
-        std::vector<FrameObserver*> observers;
-};
-
-#endif
+void FrameProvider::frameEvent(CloudConstPtr cloud) {
+    BOOST_FOREACH(FrameObserver* obs, observers) {
+        obs->frameEvent(cloud);
+    }
+}
 

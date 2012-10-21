@@ -25,9 +25,7 @@
 void KinectInterface::cloud_callback(const CloudConstPtr &cld) {
     cloud = cld;
     isStreaming = true;
-    BOOST_FOREACH (FrameObserver* obs, observers) {
-        obs->frameEvent(cloud);
-    }
+    frameEvent(cloud);
 }
 
 
@@ -53,13 +51,9 @@ void KinectInterface::setupGrabber() {
 }
 
 
-void KinectInterface::registerObserver(FrameObserver* obs) {
-    observers.push_back(obs);
-}
-
-
 void KinectInterface::waitForFirstFrame() {
     while (!isStreaming) {
         usleep(10);
     }
 }
+

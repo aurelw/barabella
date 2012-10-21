@@ -28,8 +28,10 @@ void View3D::spinOnce() {
 
 
 void View3D::updateCloud(PointCloudConstPtr cloud) {
-    mainCloud = cloud;
-    visualizer.updatePointCloud(mainCloud, "mainCloud");
+    if (cloud != NULL) {
+        mainCloud = cloud;
+        visualizer.updatePointCloud(mainCloud, "mainCloud");
+    }
 }
 
 
