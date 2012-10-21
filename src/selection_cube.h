@@ -18,6 +18,10 @@
  */
 
 #include <iostream>
+#include <fstream>
+
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 #include <pcl/common/common_headers.h>
 
@@ -65,6 +69,10 @@ class SelectionCube : public UpdateSignal {
         /* filtering */
         PointCloudPtr filterCloud(const PointCloud& cloud);
 
+        /* load/save */
+        void loadFromFile(std::string path);
+        void saveToFile(std::string path);
+
 
     private:
 
@@ -72,6 +80,21 @@ class SelectionCube : public UpdateSignal {
         float scaleX, scaleY, scaleZ;
         //additional transformation for the floor
         Eigen::Affine3f coordinateFrame;
+
+    /* serialization */
+    private:
+        friend class boost::serialization::access;
+
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version) {
+            ar & position[0];
+            ar & position[1];
+            ar & position[2];
+            ar & scaleX;
+            ar & scaleY;
+            ar & scaleZ;
+            //ar & coordinateFrame;
+        }
 
 };
 

@@ -122,3 +122,18 @@ SelectionCube::PointCloudPtr SelectionCube::filterCloud(const PointCloud& cloud)
 }
 
 
+void SelectionCube::loadFromFile(std::string path) {
+    std::ifstream ifs(path.c_str());
+    boost::archive::text_iarchive ia(ifs);
+    ia >> *this;
+}
+
+
+void SelectionCube::saveToFile(std::string path) {
+    std::ofstream ofs(path.c_str());
+    boost::archive::text_oarchive oa(ofs);
+    oa << *this;
+}
+
+
+

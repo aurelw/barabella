@@ -8,7 +8,7 @@ link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
 # deal with boost
-find_package(Boost COMPONENTS signals filesystem)
+find_package(Boost COMPONENTS signals filesystem serialization)
 include_directories(${Boost_INCLUDE_DIR} )
 
 

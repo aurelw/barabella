@@ -18,3 +18,18 @@
  */
 
 #include "global_options.h"
+
+#include <boost/filesystem.hpp>
+
+
+GlobalOptions::GlobalOptions(int argc, char** argv) {
+    doRecording = pcl::console::find_switch(argc, argv, "-r");
+    doPlayBack =  pcl::console::find_switch(argc, argv, "-p");
+
+    clipDirectory = "/tmp/foobar/";
+    selectionCubeSettingsPath = "/tmp/barabella_scube";
+
+    validSCubePath = boost::filesystem::is_regular_file(selectionCubeSettingsPath);
+}
+
+

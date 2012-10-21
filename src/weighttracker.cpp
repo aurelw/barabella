@@ -55,15 +55,6 @@ int main (int argc, char** argv) {
 
     while (true) {
         app.spinOnce();
-/*
-        if (view3d.flagExtractTemplate) {
-            view3d.flagExtractTemplate = false;
-            templateCloud = sCube.filterCloud(*cloudptr);
-            view3d.addTemplate(templateCloud);
-            view3d.setDrawMode(View3D::TEMPLATE);
-            displayTemplate = true;
-        }
-    */
     }
     
 

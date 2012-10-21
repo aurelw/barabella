@@ -72,6 +72,7 @@ class View3D {
 
         View3D() {
             visualizer.addCoordinateSystem(1.0);
+            visualizer.setBackgroundColor(0.2, 0.2, 0.2);
             registerCallbacks();
 
             cloudTransform.setIdentity();
@@ -82,6 +83,7 @@ class View3D {
             state = START;
             flagCaptureFloor = false;
             flagExtractTemplate = false;
+
         }
 
         void spinOnce();

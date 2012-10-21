@@ -48,6 +48,12 @@ class BarabellaApp {
 
     public:
 
+        enum OperationMode {
+            STREAMING,
+            CLIPPLAYBACK,
+            TRACKING,
+        };
+
         BarabellaApp(GlobalOptions* op) :
             gOptions(op),
             floorCoefficients( new pcl::ModelCoefficients()),
@@ -55,18 +61,27 @@ class BarabellaApp {
         {
             kinIface.waitForFirstFrame();
             initView3d();
+            initTemplates();
+            operationMode = STREAMING;
         }
 
         void spinOnce();
 
         void updateFloor();
         void extractTemplate();
+        void setOperationMode(OperationMode mode);
+        void saveTemplateSettings();
+
+        /* clip recording */
+        void recordNewClip();
+        void stopRecording();
 
     private:
 
         /* options */
         GlobalOptions* gOptions;
         bool displayTemplate;
+        OperationMode operationMode;
 
         /* main modules */
         View3D view3d;
@@ -82,6 +97,15 @@ class BarabellaApp {
 
         /* init */
         void initView3d();
+        void initTemplates();
+
+        /* spins */
+        void spinStreaming();
+        void spinClipPlayBack();
+        void spinTracking();
+
+        /* recording */
+        Clip* clip;
 
 };
 

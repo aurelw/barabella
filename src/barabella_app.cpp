@@ -20,6 +20,7 @@
 #include "barabella_app.h"
 
 
+
 void BarabellaApp::initView3d() {
     view3d.setCube(&sCube);
     mainCloud = kinIface.getLastCloud();
@@ -27,16 +28,49 @@ void BarabellaApp::initView3d() {
 }
 
 
+void BarabellaApp::initTemplates() {
+    if (gOptions->validSCubePath) {
+        sCube.loadFromFile(gOptions->selectionCubeSettingsPath);
+    }
+}
+
+
+void BarabellaApp::setOperationMode(OperationMode mode) {
+    operationMode = mode;
+}
+
+
 void BarabellaApp::spinOnce() {
 
+    switch (operationMode) {
+        
+        case STREAMING:
+            spinStreaming();
+            break;
+
+        case CLIPPLAYBACK:
+            spinClipPlayBack();
+            break;
+
+        case TRACKING:
+            spinTracking();
+            break;
+    }
+
+}
+
+
+void BarabellaApp::spinStreaming() {
+
     mainCloud = kinIface.getLastCloud();
-    
+
     if (!displayTemplate) {
         view3d.updateCloud(mainCloud);
     }
 
     view3d.spinOnce();
 
+    /* View3D events */
     if (view3d.flagCaptureFloor) {
         view3d.flagCaptureFloor = false;
         updateFloor();
@@ -46,11 +80,20 @@ void BarabellaApp::spinOnce() {
         view3d.flagExtractTemplate = false;
         if (!displayTemplate) {
             extractTemplate();
+            saveTemplateSettings();
         } else {
             view3d.setDrawMode(View3D::NORMAL);
         }
         displayTemplate = !displayTemplate;
     }
+}
+
+
+void BarabellaApp::spinClipPlayBack() {
+}
+
+
+void BarabellaApp::spinTracking() {
 }
 
 
@@ -67,8 +110,12 @@ void BarabellaApp::updateFloor() {
 
 void BarabellaApp::extractTemplate() {
     templateCloud = sCube.filterCloud(*mainCloud);
-    templateCloud = sCube.filterCloud(*mainCloud);
     view3d.addTemplate(templateCloud);
     view3d.setDrawMode(View3D::TEMPLATE);
+}
+
+
+void BarabellaApp::saveTemplateSettings() {
+    sCube.saveToFile(gOptions->selectionCubeSettingsPath);
 }
 

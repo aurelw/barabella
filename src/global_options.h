@@ -30,15 +30,16 @@ class GlobalOptions {
 
     public:
         
-        GlobalOptions(int argc, char** argv) {
-            doRecording = pcl::console::find_switch(argc, argv, "-r");
-            doPlayBack =  pcl::console::find_switch(argc, argv, "-p");
-            clipDirectory = "/tmp/foobar/";
-        }
+        GlobalOptions(int argc, char** argv);
 
+        /* clips */
         bool doRecording;
         bool doPlayBack;
         std::string clipDirectory;
+
+        /* selection cube */
+        std::string selectionCubeSettingsPath;
+        bool validSCubePath;
 
 };
 
