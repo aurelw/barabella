@@ -22,6 +22,8 @@
 
 void Tracker::setClip(Clip* cl) {
     clip = cl;
+    clip->load();
+    clip->begin();
 }
 
 

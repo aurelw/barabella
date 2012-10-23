@@ -98,6 +98,7 @@ class View3D {
 
         bool flagCaptureFloor;
         bool flagExtractTemplate;
+        bool flagTrack;
 
     private:
 

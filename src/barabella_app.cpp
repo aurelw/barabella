@@ -34,8 +34,29 @@ void BarabellaApp::initTemplates() {
 }
 
 
+void BarabellaApp::startTracker() {
+    tracker.setClip(clip);
+    tracker.setCoordinateFrame(floorTrans); 
+    tracker.setTemplate(templateCloud);
+    tracker.setInitialSearchWindow(&sCube);
+    tracker.initTracker();
+}
+
+
 void BarabellaApp::setOperationMode(OperationMode mode) {
     operationMode = mode;
+    switch (operationMode) {
+
+        case STREAMING:
+            break;
+
+        case CLIPPLAYBACK:
+            break;
+
+        case TRACKING:
+            startTracker();
+            break;
+    }
 }
 
 
@@ -85,6 +106,11 @@ void BarabellaApp::spinStreaming() {
         }
         displayTemplate = !displayTemplate;
     }
+
+    if (view3d.flagTrack) {
+        view3d.flagTrack = false;
+        setOperationMode(TRACKING);
+    }
 }
 
 
@@ -96,6 +122,13 @@ void BarabellaApp::spinClipPlayBack() {
 
 
 void BarabellaApp::spinTracking() {
+    tracker.processFrame();
+
+    /* display results of current frame */
+    mainCloud = tracker.getCurrentCloud();
+    view3d.updateCloud(mainCloud);
+    view3d.setCube(tracker.getSearchWindow());
+    view3d.spinOnce();
 }
 
 

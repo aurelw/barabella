@@ -21,6 +21,15 @@
 
 #include <pcl/filters/crop_box.h>
 
+SelectionCube::SelectionCube(const SelectionCube& oCube) {
+    position = oCube.position; 
+    scaleX = oCube.scaleX;
+    scaleY = oCube.scaleY;
+    scaleZ = oCube.scaleZ;
+    coordinateFrame = oCube.coordinateFrame; 
+}
+
+
 Eigen::Vector3f SelectionCube::getPosition() {
     return position;
 }

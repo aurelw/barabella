@@ -49,6 +49,8 @@ class SelectionCube : public UpdateSignal {
         {
         }
 
+        SelectionCube(const SelectionCube& oCube);
+
         /* local transformations */
         Eigen::Vector3f getPosition();
         float getSx();

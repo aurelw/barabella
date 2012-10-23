@@ -33,6 +33,7 @@
 #include "clip.h"
 #include "global_options.h"
 #include "clip_player.h"
+#include "icp_framed_tracker.h"
 
 
 #ifndef __BARABELLA_APP_H__
@@ -107,7 +108,6 @@ class BarabellaApp {
 
         /* cloud data */
         PointCloudConstPtr mainCloud;
-        PointCloudPtr templateCloud;
         Eigen::Affine3f floorTrans;
         pcl::ModelCoefficients::Ptr floorCoefficients;
 
@@ -123,6 +123,11 @@ class BarabellaApp {
         /* recording */
         Clip* clip;
         ClipPlayer clipPlayer;
+
+        /* tracking */
+        PointCloudPtr templateCloud;
+        IcpFramedTracker tracker;
+        void startTracker();
 
 };
 

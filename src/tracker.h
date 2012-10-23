@@ -38,6 +38,7 @@ class Tracker {
         virtual void setCoordinateFrame(Eigen::Affine3f t);
 
         /* processing */
+        virtual void initTracker() = 0;
         virtual void processFrame() = 0;
         virtual void processAllFrames() = 0;
 

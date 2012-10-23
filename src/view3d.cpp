@@ -20,6 +20,7 @@
 #include "view3d.h"
 
 #include "utils.h"
+#include "barabella_config.h"
 
 
 void View3D::spinOnce() {
@@ -131,6 +132,8 @@ void keyboardCallback(const pcl::visualization::KeyboardEvent &event,
             view3d->flagCaptureFloor = true;
         } else if (keysym == "t") {
             view3d->flagExtractTemplate = true;
+        } else if (keysym == "i") {
+            view3d->flagTrack = true;
         }
 
 #ifdef BB_VERBOSE
