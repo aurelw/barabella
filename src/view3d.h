@@ -90,12 +90,14 @@ class View3D {
         void updateCloud(PointCloudConstPtr cloud);
         void addCloud(PointCloudConstPtr cloud);
         void setFloor(pcl::ModelCoefficients::Ptr coefficients);
-        void setCube(SelectionCube* cube);
+        void setCube(SelectionCube::Ptr cube);
 
         void addTemplate(PointCloudConstPtr cloud);
+        void setTrackedCenter(const Eigen::Vector3f& v);
 
         void setDrawMode(DrawMode mode);
 
+        /* interaction flags */
         bool flagCaptureFloor;
         bool flagExtractTemplate;
         bool flagTrack;
@@ -112,7 +114,7 @@ class View3D {
         pcl::visualization::PointCloudGeometryHandler<PointT>::ConstPtr gemHandl;
 
         /* a selection cube */
-        SelectionCube* sCube;
+        SelectionCube::Ptr sCube;
         void moveCube(float dx, float dy, float dz);
         void updateSelectionCube();
         float edit_stepsize = 0.025;
@@ -122,6 +124,9 @@ class View3D {
 
         /* user input and draw states */
         InteractionState state;
+
+        /* tracking */
+        Eigen::Vector3f trackedCenter;
 };
 
 

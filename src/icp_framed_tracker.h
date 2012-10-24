@@ -21,6 +21,7 @@
 
 #include "tracker.h"
 #include "selection_cube.h"
+#include "template.h"
 
 
 #ifndef __ICP_FRAMED_TRACKER__
@@ -31,14 +32,16 @@ class IcpFramedTracker : public Tracker {
     public:
 
         IcpFramedTracker() :
-            boarderSize(0.3)
+            Tracker(),
+            boarderSize(0.3),
+            isFinished(false)
         {
         }
 
         /* tracking options */
         //mandatory
-        virtual void setTemplate(PointCloudConstPtr tCloud);
-        virtual void setInitialSearchWindow(SelectionCube* sCube);
+        virtual void setTemplate(CloudTemplate::Ptr cTemp);
+        virtual void setInitialSearchWindow(SelectionCube::Ptr sCube);
         //optional
         virtual void setWindowBorder(float bSize);
 
@@ -46,19 +49,24 @@ class IcpFramedTracker : public Tracker {
         virtual void initTracker();
         virtual void processFrame();
         virtual void processAllFrames();
+        virtual bool finished();
 
         /* results for current frame */
-        SelectionCube* getSearchWindow();
+        SelectionCube::Ptr getSearchWindow();
         PointCloudConstPtr getCurrentCloud();
 
     protected:
+        CloudTemplate::Ptr cloudTemplate;
         PointCloudConstPtr templateCloud;
         PointCloudConstPtr clipCloud;
-        SelectionCube* searchWindow;
+        SelectionCube::Ptr searchWindow;
         float boarderSize;
 
-        /* tracking results */
-        std::vector<Eigen::Affine3f> trace;
+        // current GLOBAL transform of the tracked object
+        Eigen::Affine3f currentTransform;
+
+        bool isFinished;
+
 };
 
 #endif

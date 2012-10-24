@@ -85,6 +85,13 @@ Eigen::Affine3f SelectionCube::getCoordinateFrame() {
 }
 
 
+Eigen::Affine3f SelectionCube::getGlobalTransformation() {
+    Eigen::Affine3f trans = coordinateFrame;
+    trans.translate(position);
+    return trans;
+}
+
+
 Eigen::Vector3f SelectionCube::getGlobalPosition() {
     Eigen::Affine3f pos = coordinateFrame; 
     pos.translate(position);

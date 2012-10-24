@@ -19,27 +19,12 @@
 
 #include "boost/smart_ptr.hpp"
 
-#include "clip.h"
+#include <pcl/common/common_headers.h>
 
-#ifndef __TRACKER_H__
-#define __TRACKER_H__
+#ifndef __TEMPLATE_H__
+#define __TEMPLATE_H__
 
-class Trace {
-
-    public:
-        typedef boost::shared_ptr<Trace> Ptr;
-
-    public:
-
-        Eigen::Affine3f coordinateFrame;
-        std::vector<Eigen::Affine3f> transforms;
-        Clip* clip;
-
-    protected:
-};
-
-
-class Tracker {
+class CloudTemplate {
 
     public:
         typedef pcl::PointXYZRGBA PointT;
@@ -47,33 +32,13 @@ class Tracker {
         typedef typename PointCloud::Ptr PointCloudPtr;
         typedef typename PointCloud::ConstPtr PointCloudConstPtr;
 
+        typedef boost::shared_ptr<CloudTemplate> Ptr;
+
     public:
 
-        Tracker() :
-            trace(new Trace)
-        {
-        }
-
-        /* tracking options */
-        virtual void setClip(Clip* cl);
-        virtual void setCoordinateFrame(Eigen::Affine3f t);
-
-        /* processing */
-        virtual void initTracker() = 0;
-        virtual void processFrame() = 0;
-        virtual void processAllFrames() = 0;
-        virtual bool finished() = 0;
-
-        /* results */
-        virtual Trace::Ptr getTrace();
-
-    protected:
-        Clip* clip;
-        Eigen::Affine3f coordinateFrame;
-
-        Trace::Ptr trace;
+        Eigen::Vector3f center;
+        PointCloudConstPtr cloud;
 };
-
 
 #endif
 

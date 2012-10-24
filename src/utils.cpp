@@ -50,7 +50,17 @@ Eigen::Affine3f affineFromPlane(pcl::ModelCoefficients::Ptr coe) {
 }
 
 
-Eigen::Quaternionf rotationFromAffine(Eigen::Affine3f aff) {
+Eigen::Quaternionf rotationFromAffine(const Eigen::Affine3f& aff) {
     Eigen::Quaternionf quat(aff.rotation());
     return quat; 
 }
+
+
+pcl::PointXYZ vecToPoint(const Eigen::Vector3f& v) {
+    pcl::PointXYZ p;
+    p.x = v[0];
+    p.y = v[1];
+    p.z = v[2];
+    return p;
+}
+

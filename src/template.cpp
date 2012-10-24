@@ -17,21 +17,4 @@
  *   along with Barabella.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "tracker.h"
-
-
-void Tracker::setClip(Clip* cl) {
-    clip = cl;
-    clip->load();
-    clip->begin();
-}
-
-
-void Tracker::setCoordinateFrame(Eigen::Affine3f t) {
-    coordinateFrame = t;
-}
-
-
-Trace::Ptr Tracker::getTrace() {
-    return trace;
-}
+#include "template.h"

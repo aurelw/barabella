@@ -21,7 +21,7 @@
 
 
 void BarabellaApp::initView3d() {
-    view3d.setCube(&sCube);
+    view3d.setCube(sCube);
     mainCloud = kinIface.getLastCloud();
     view3d.addCloud(mainCloud);
 }
@@ -29,16 +29,16 @@ void BarabellaApp::initView3d() {
 
 void BarabellaApp::initTemplates() {
     if (gOptions->validSCubePath) {
-        sCube.loadFromFile(gOptions->selectionCubeSettingsPath);
+        sCube->loadFromFile(gOptions->selectionCubeSettingsPath);
     }
 }
 
 
 void BarabellaApp::startTracker() {
     tracker.setClip(clip);
-    tracker.setCoordinateFrame(floorTrans); 
-    tracker.setTemplate(templateCloud);
-    tracker.setInitialSearchWindow(&sCube);
+    tracker.setCoordinateFrame(floorTrans.inverse()); 
+    tracker.setTemplate(cloudTemplate);
+    tracker.setInitialSearchWindow(sCube);
     tracker.initTracker();
 }
 
@@ -128,7 +128,18 @@ void BarabellaApp::spinTracking() {
     mainCloud = tracker.getCurrentCloud();
     view3d.updateCloud(mainCloud);
     view3d.setCube(tracker.getSearchWindow());
+    view3d.setTrackedCenter(
+            //tracker.getSearchWindow()->getGlobalPosition());
+            (tracker.getTrace()->coordinateFrame.inverse() *
+             tracker.getTrace()->transforms.back() ).translation());
     view3d.spinOnce();
+
+    //FIXME
+#ifdef BB_VERBOSE
+    std::cout << "translation: " << std::endl;
+    std::cout << tracker.getTrace()->transforms.back().translation() << std::endl;
+    std::cout << "-------------" << std::endl;
+#endif
 }
 
 
@@ -137,20 +148,21 @@ void BarabellaApp::updateFloor() {
     floorEx.extract(floorCoefficients);
     floorTrans = affineFromPlane(floorCoefficients);
     // set the transformation of the selection cube
-    sCube.setCoordinateFrame(floorTrans);
+    sCube->setCoordinateFrame(floorTrans);
     // display floor in view3d
     view3d.setFloor(floorCoefficients);
 }
 
 
 void BarabellaApp::extractTemplate() {
-    templateCloud = sCube.filterCloud(*mainCloud);
-    view3d.addTemplate(templateCloud);
+    cloudTemplate->cloud = sCube->filterCloud(*mainCloud);
+    cloudTemplate->center = sCube->getGlobalPosition();
+    view3d.addTemplate(cloudTemplate->cloud);
     view3d.setDrawMode(View3D::TEMPLATE);
 }
 
 
 void BarabellaApp::saveTemplateSettings() {
-    sCube.saveToFile(gOptions->selectionCubeSettingsPath);
+    sCube->saveToFile(gOptions->selectionCubeSettingsPath);
 }
 

@@ -48,6 +48,14 @@ void View3D::addTemplate(PointCloudConstPtr cloud) {
 }
 
 
+void View3D::setTrackedCenter(const Eigen::Vector3f& v) {
+    trackedCenter = v;
+    visualizer.removeShape("trackingCenter");
+    visualizer.addSphere(vecToPoint(trackedCenter), 0.025, 0.0, 0.8, 0.0, 
+            "trackingCenter");
+}
+
+
 void View3D::setDrawMode(DrawMode mode) {
     visualizer.removePointCloud("templateCloud");
     visualizer.removePointCloud("mainCloud");
@@ -245,7 +253,7 @@ void keyboardCallback(const pcl::visualization::KeyboardEvent &event,
 }
 
 
-void View3D::setCube(SelectionCube* cube) {
+void View3D::setCube(SelectionCube::Ptr cube) {
     sCube = cube;
     updateSelectionCube();
     // connect signal to slot

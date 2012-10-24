@@ -21,6 +21,7 @@
 #include <iostream>
 #include <stdio.h>
 
+#include <pcl/common/time.h>
 #include <boost/filesystem.hpp>
 
 #include <pcl/io/pcd_io.h>
@@ -39,6 +40,10 @@ class Clip : public FrameObserver {
         typedef pcl::PointCloud<PointT> PointCloud;
         typedef typename PointCloud::Ptr PointCloudPtr;
         typedef typename PointCloud::ConstPtr PointCloudConstPtr;
+
+        typedef boost::shared_ptr<Clip> Ptr;
+
+    public:
 
         Clip() {
         };

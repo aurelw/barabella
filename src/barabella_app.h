@@ -59,7 +59,9 @@ class BarabellaApp {
         BarabellaApp(GlobalOptions* op) :
             gOptions(op),
             floorCoefficients( new pcl::ModelCoefficients()),
-            displayTemplate(false)
+            displayTemplate(false),
+            sCube(new SelectionCube),
+            cloudTemplate(new CloudTemplate) 
         {
             kinIface.waitForFirstFrame();
             initView3d();
@@ -103,8 +105,8 @@ class BarabellaApp {
         /* main modules */
         View3D view3d;
         KinectInterface kinIface;
-        SelectionCube sCube;
         FloorExtractor floorEx;
+        SelectionCube::Ptr sCube;
 
         /* cloud data */
         PointCloudConstPtr mainCloud;
@@ -125,7 +127,7 @@ class BarabellaApp {
         ClipPlayer clipPlayer;
 
         /* tracking */
-        PointCloudPtr templateCloud;
+        CloudTemplate::Ptr cloudTemplate;
         IcpFramedTracker tracker;
         void startTracker();
 

@@ -22,7 +22,7 @@
 #include <vector>
 #include <algorithm>
 
-#include <pcl/common/time.h>
+#include "boost/smart_ptr.hpp"
 
 #include "barabella_config.h"
 

@@ -27,6 +27,7 @@
 #define __UTILS_H__
 
 Eigen::Affine3f affineFromPlane(pcl::ModelCoefficients::Ptr coe);
-Eigen::Quaternionf rotationFromAffine(Eigen::Affine3f aff);
+Eigen::Quaternionf rotationFromAffine(const Eigen::Affine3f& aff);
+pcl::PointXYZ vecToPoint(const Eigen::Vector3f& v);
 
 #endif

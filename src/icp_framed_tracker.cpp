@@ -20,12 +20,14 @@
 #include "icp_framed_tracker.h"
 
 
-void IcpFramedTracker::setTemplate(PointCloudConstPtr tCloud) {
-    templateCloud = tCloud;
+void IcpFramedTracker::setTemplate(CloudTemplate::Ptr cTemp) {
+    cloudTemplate = cTemp;
+    // seperate variable, because this template will be transformed
+    templateCloud = cloudTemplate->cloud;
 }
 
 
-void IcpFramedTracker::setInitialSearchWindow(SelectionCube* sCube) {
+void IcpFramedTracker::setInitialSearchWindow(SelectionCube::Ptr sCube) {
     searchWindow = sCube;
 }
 
@@ -37,16 +39,29 @@ void IcpFramedTracker::setWindowBorder(float bSize) {
 
 void IcpFramedTracker::initTracker() {
     /* copy and extend the search window */
-    SelectionCube* newCube = new SelectionCube(*searchWindow);
+    SelectionCube::Ptr newCube(new SelectionCube(*searchWindow));
     newCube->setSx( newCube->getSx() + boarderSize );
     newCube->setSy( newCube->getSy() + boarderSize );
     newCube->setSz( newCube->getSz() + boarderSize );
     searchWindow = newCube;
+
+    /* init trace */
+    trace->clip = clip;
+    trace->coordinateFrame = coordinateFrame;
+
+    /* init position */
+    currentTransform.setIdentity();
+    currentTransform.translate(cloudTemplate->center);
 }
 
 
 void IcpFramedTracker::processFrame() {
-    std::cout << "process frame" << std::endl;
+    /* check if there are still frames in the clip to process */
+    if (clip->end()) {
+        isFinished = true;
+        return;
+    }
+
     /* get the target cloud */
     clipCloud = clip->next();
     PointCloudPtr targetCloud = searchWindow->filterCloud(*clipCloud);
@@ -67,31 +82,45 @@ void IcpFramedTracker::processFrame() {
     Eigen::Matrix4f mat;
     mat = icp.getFinalTransformation();
     Eigen::Affine3f trans(mat);
-    //trans = trans.inverse();
-    trace.push_back(trans);
 
     /* move the search window to this frame */
     Eigen::Affine3f sWindowTrans = searchWindow->getCoordinateFrame();
     sWindowTrans = trans * sWindowTrans;
     searchWindow->setCoordinateFrame(sWindowTrans);
 
-    /* move the template */
+    /* also move the template */
     PointCloudPtr transformedTemplate( new PointCloud);
     pcl::transformPointCloud<PointT>(*templateCloud, 
             *transformedTemplate, trans);
     templateCloud = transformedTemplate;
+
+    /* results */
+    currentTransform = trans * currentTransform;
+    // Save the transform of the object in the 
+    // LOCAL coordinate frame of the trace!
+    // This will give coordinates in respect to 
+    // the floor.
+    trace->transforms.push_back(trace->coordinateFrame * currentTransform);
+    //trace->transforms.push_back(currentTransform);
+}
+
+
+bool IcpFramedTracker::finished() {
+    return isFinished;
 }
 
 
 void IcpFramedTracker::processAllFrames() {
-    while (!clip->end()) {
+    while (!isFinished) {
         processFrame();
     }
 }
 
 
-SelectionCube* IcpFramedTracker::getSearchWindow() {
-    return searchWindow;
+SelectionCube::Ptr IcpFramedTracker::getSearchWindow() {
+    // copy so it is safe from manipulation
+    SelectionCube::Ptr r(new SelectionCube(*searchWindow));
+    return r;
 }
 
 

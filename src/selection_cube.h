@@ -22,6 +22,7 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include "boost/smart_ptr.hpp"
 
 #include <pcl/common/common_headers.h>
 
@@ -40,6 +41,8 @@ class SelectionCube : public UpdateSignal {
         typedef pcl::PointCloud<PointT> PointCloud;
         typedef typename PointCloud::Ptr PointCloudPtr;
         typedef typename PointCloud::ConstPtr PointCloudConstPtr;
+
+        typedef boost::shared_ptr<SelectionCube> Ptr;
 
     public:
 
@@ -65,6 +68,7 @@ class SelectionCube : public UpdateSignal {
         /* transform in different coordinate frame */
         void setCoordinateFrame(const Eigen::Affine3f& t);
         Eigen::Affine3f getCoordinateFrame();
+        Eigen::Affine3f getGlobalTransformation();
         Eigen::Vector3f getGlobalPosition();
         Eigen::Quaternionf getGlobalRotation();
 
