@@ -122,24 +122,30 @@ void BarabellaApp::spinClipPlayBack() {
 
 
 void BarabellaApp::spinTracking() {
-    tracker.processFrame();
+    if (!tracker.finished()) {
+        tracker.processFrame();
 
-    /* display results of current frame */
-    mainCloud = tracker.getCurrentCloud();
-    view3d.updateCloud(mainCloud);
-    view3d.setCube(tracker.getSearchWindow());
-    view3d.setTrackedCenter(
-            //tracker.getSearchWindow()->getGlobalPosition());
-            (tracker.getTrace()->coordinateFrame.inverse() *
-             tracker.getTrace()->transforms.back() ).translation());
-    view3d.spinOnce();
+        /* display results of current frame */
+        mainCloud = tracker.getCurrentCloud();
+        view3d.updateCloud(mainCloud);
+        view3d.setCube(tracker.getSearchWindow());
+        view3d.setTrackedCenter(
+        //tracker.getSearchWindow()->getGlobalPosition());
+        (tracker.getTrace()->coordinateFrame.inverse() *
+         tracker.getTrace()->transforms.back() ).translation());
+        view3d.spinOnce();
 
-    //FIXME
+        //FIXME
 #ifdef BB_VERBOSE
-    std::cout << "translation: " << std::endl;
-    std::cout << tracker.getTrace()->transforms.back().translation() << std::endl;
-    std::cout << "-------------" << std::endl;
+        std::cout << "translation: " << std::endl;
+        std::cout << tracker.getTrace()->transforms.back().translation() << std::endl;
+        std::cout << "-------------" << std::endl;
 #endif
+    } else { // finished tracking
+        tracker.getTrace()->writeToCSV(gOptions->traceCSVPath);
+        setOperationMode(STREAMING);
+    }
+
 }
 
 

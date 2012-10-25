@@ -19,6 +19,26 @@
 
 #include "tracker.h"
 
+#include <iostream>
+#include <fstream>
+
+#include <boost/foreach.hpp>
+
+
+void Trace::writeToCSV(std::string fpath) {
+    std::ofstream csvfile;
+    csvfile.open(fpath.c_str());
+
+    /* write the coordinates of the trace */
+    //FIXME timestamps
+    BOOST_FOREACH( Eigen::Affine3f trans, transforms ) {
+        Eigen::Vector3f pos = trans.translation();
+        csvfile << pos[0] << "," << pos[1] << "," << pos[2] << std::endl;
+    }
+
+    csvfile.close();
+}
+
 
 void Tracker::setClip(Clip* cl) {
     clip = cl;

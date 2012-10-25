@@ -35,6 +35,8 @@ class Trace {
         std::vector<Eigen::Affine3f> transforms;
         Clip* clip;
 
+        void writeToCSV(std::string fpath);
+
     protected:
 };
 

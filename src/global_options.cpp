@@ -30,6 +30,8 @@ GlobalOptions::GlobalOptions(int argc, char** argv) {
     selectionCubeSettingsPath = "/tmp/barabella_scube";
 
     validSCubePath = boost::filesystem::is_regular_file(selectionCubeSettingsPath);
+
+    traceCSVPath = "/tmp/bb_trace.csv";
 }
 
 

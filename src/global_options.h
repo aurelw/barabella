@@ -41,6 +41,9 @@ class GlobalOptions {
         std::string selectionCubeSettingsPath;
         bool validSCubePath;
 
+        /* tracking */
+        std::string traceCSVPath;
+
 };
 
 #endif
