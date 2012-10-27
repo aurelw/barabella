@@ -83,6 +83,7 @@ class View3D {
             state = START;
             flagCaptureFloor = false;
             flagExtractTemplate = false;
+            flagTrack = false;
 
         }
 

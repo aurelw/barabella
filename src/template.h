@@ -35,9 +35,40 @@ class CloudTemplate {
         typedef boost::shared_ptr<CloudTemplate> Ptr;
 
     public:
-
         Eigen::Vector3f center;
-        PointCloudConstPtr cloud;
+
+        virtual void setPointCloud(PointCloudConstPtr cloud);
+        virtual PointCloudConstPtr getPointCloud();
+
+    protected:
+
+        PointCloudConstPtr templateCloud;
+};
+
+
+
+class FilteredCloudTemplate : public CloudTemplate {
+
+    public:
+
+        FilteredCloudTemplate(vSize) :
+            CloudTemplate(),
+            voxelSize(vSize)
+        {
+        }
+
+        FilteredCloudTemplate() :
+            CloudTemplate(),
+            FilteredCloudTemplate(0.01)
+        {
+        }
+
+        void setPointCloud(PointCloudConstPtr cloud);
+
+    protected:
+
+        float voxelSize;
+
 };
 
 #endif

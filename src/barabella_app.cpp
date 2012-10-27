@@ -161,9 +161,9 @@ void BarabellaApp::updateFloor() {
 
 
 void BarabellaApp::extractTemplate() {
-    cloudTemplate->cloud = sCube->filterCloud(*mainCloud);
+    cloudTemplate->setPointCloud(sCube->filterCloud(*mainCloud));
     cloudTemplate->center = sCube->getGlobalPosition();
-    view3d.addTemplate(cloudTemplate->cloud);
+    view3d.addTemplate(cloudTemplate->getPointCloud());
     view3d.setDrawMode(View3D::TEMPLATE);
 }
 

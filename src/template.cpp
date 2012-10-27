@@ -18,3 +18,34 @@
  */
 
 #include "template.h"
+
+#include <pcl/filters/voxel_grid.h>
+
+
+void CloudTemplate::setPointCloud(PointCloudConstPtr cloud) {
+    templateCloud = cloud;
+}
+
+
+CloudTemplate::PointCloudConstPtr CloudTemplate::getPointCloud() {
+    return templateCloud;
+}
+
+
+void FilteredCloudTemplate::setPointCloud(PointCloudConstPtr cloud) {
+    templateCloud = cloud;
+    PointCloudPtr fcloud (new PointCloud);
+
+    /* only one main euclidian cluster */
+    //FIXME
+
+    /* do downsampling */
+    pcl::VoxelGrid<PointT> grid;
+    grid.setInputCloud(templateCloud);
+    grid.setLeafSize(voxelSize, voxelSize, voxelSize);
+    grid.filter(*fcloud);
+
+    templateCloud = fcloud;
+
+
+}

@@ -61,7 +61,7 @@ class BarabellaApp {
             floorCoefficients( new pcl::ModelCoefficients()),
             displayTemplate(false),
             sCube(new SelectionCube),
-            cloudTemplate(new CloudTemplate) 
+            cloudTemplate(new FilteredCloudTemplate) 
         {
             kinIface.waitForFirstFrame();
             initView3d();

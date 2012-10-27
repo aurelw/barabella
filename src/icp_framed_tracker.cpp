@@ -23,7 +23,7 @@
 void IcpFramedTracker::setTemplate(CloudTemplate::Ptr cTemp) {
     cloudTemplate = cTemp;
     // seperate variable, because this template will be transformed
-    templateCloud = cloudTemplate->cloud;
+    templateCloud = cloudTemplate->getPointCloud();
 }
 
 
