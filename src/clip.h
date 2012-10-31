@@ -21,13 +21,15 @@
 #include <iostream>
 #include <stdio.h>
 
-#include <pcl/common/time.h>
 #include <boost/filesystem.hpp>
+#include <boost/thread.hpp>
 
+#include <pcl/common/time.h>
 #include <pcl/io/pcd_io.h>
 
 #include "frame_observer.h"
 #include "kinect_interface.h"
+#include "producer_consumer_queue.h"
 
 #ifndef __CLIP_H__
 #define __CLIP_H__
@@ -45,7 +47,11 @@ class Clip : public FrameObserver {
 
     public:
 
-        Clip() {
+        Clip() :
+            loadThread(NULL),
+            isRecording(false),
+            frameCounter(0)
+        {
         };
 
         void setDirectory(std::string dir);
@@ -66,18 +72,24 @@ class Clip : public FrameObserver {
         void frameEvent(PointCloudConstPtr cloud);
 
     private:
+        /* recording */
         KinectInterface* kinectIf;
         bool isRecording;
         pcl::PCDWriter writer;
         int frameCounter;
 
+        /* loading */
         std::string directory;
-        std::vector<PointCloudPtr> frames;
         std::vector<boost::filesystem::path> frameFiles;
         std::vector<boost::filesystem::path>::iterator frameIt;
         PointCloudPtr lastCloud;
+        ProducerConsumerQueue<PointCloudPtr> loadQueue;
+        boost::thread* loadThread;
+        void loadFilesToQueue();
 
+        /* saving */
         void saveCloud(PointCloudConstPtr cloud, const std::string& fname);
+
 };
 #endif
 

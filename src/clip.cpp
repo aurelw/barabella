@@ -35,12 +35,12 @@ void Clip::setDirectory(string dir) {
 
 
 void Clip::load() {
-    frameCounter = frameFiles.size();
     frameFiles.clear();
     copy(directory_iterator(directory), 
             directory_iterator(), back_inserter(frameFiles));
     //boost directory operator is not sorting, so do it by hand
     sort(frameFiles.begin(), frameFiles.end());
+    frameCounter = frameFiles.size();
 }
 
 
@@ -97,25 +97,40 @@ void Clip::saveCloud(PointCloudConstPtr cloud, const string& fname) {
 
 void Clip::begin() {
     frameIt = frameFiles.begin();
+    /* reset and init queue */
+    loadQueue.reset();
+
+    /* start producer thread */
+    loadThread = new boost::thread(boost::bind(&Clip::loadFilesToQueue, this));
+}
+
+
+void Clip::loadFilesToQueue() {
+    frameIt = frameFiles.begin();
+    while (frameIt != frameFiles.end()) {
+
+        /* load the pcd file */
+        path frameFile = *frameIt;
+        string filename = frameFile.string();
+        PointCloudPtr cloud (new PointCloud);
+        pcl::io::loadPCDFile<PointT>(filename, *cloud);
+
+        /* insert into queue */
+        if (frameIt + 1 != frameFiles.end()) {
+            loadQueue.push(cloud);
+        } else { // last cloud
+            loadQueue.push(cloud, true);
+        }
+
+        /* to next file */
+        frameIt++;
+    }
 }
 
 
 Clip::PointCloudPtr Clip::next() {
-    if (frameIt != frameFiles.end()) {
-        /* get current path to file and convert to filename */
-        path frameFile = *frameIt;
-        frameIt++;
-        string filename = frameFile.string();
-
-#ifdef BB_VERBOSE
-        std::cout << "Loading pcd: " << filename << std::endl;
-#endif
-        
-        /* load pcd file */
-        PointCloudPtr cloud (new PointCloud);
-        pcl::io::loadPCDFile<PointT>(filename, *cloud);
-        lastCloud = cloud;
-        return cloud;
+    if (! loadQueue.isDone()) {
+        lastCloud = loadQueue.pop();
     }
 
     return lastCloud;
@@ -123,6 +138,6 @@ Clip::PointCloudPtr Clip::next() {
 
 
 bool Clip::end() {
-    return frameIt == frameFiles.end();
+    return loadQueue.isDone();
 }
 

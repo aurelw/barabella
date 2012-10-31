@@ -21,6 +21,7 @@
 
 #include <boost/thread/locks.hpp>
 #include <boost/thread/mutex.hpp>
+#include <boost/thread.hpp>
 
 #ifndef __PRODUCER_CONSUMER_QUEUE_H__
 #define __PRODUCER_CONSUMER_QUEUE_H__
@@ -55,6 +56,72 @@ class ProducerConsumerQueue {
         bool noMoreElements;
 
 };
+
+
+
+
+template <class T>
+void ProducerConsumerQueue<T>::push(T element, bool isLast=false) {
+    while (true) {
+        mutex.lock();
+        int bufferSize = queue.size();
+        if (bufferSize < maxSize) {
+            queue.push(element);
+            if (isLast) {
+                noMoreInput = true;
+            }
+        } 
+        mutex.unlock();
+        if (bufferSize >= maxSize) { // else - buffer full
+            usleep(sleepDelay);
+            //boost::this_thread::sleep(boost::posix_time::milliseconds(sleepDelay));
+        } else {
+            break;
+        }
+    } 
+}
+
+
+template <class T>
+T ProducerConsumerQueue<T>::pop() {
+
+    T element;
+
+    while (true) {
+        mutex.lock();
+        int bufferSize = queue.size();
+        if (bufferSize > 0) {
+            if (bufferSize == 1 && noMoreInput) {
+                noMoreElements = true;
+            }
+            element = queue.front();
+            queue.pop();
+        } 
+        mutex.unlock();
+        if (bufferSize == 0) { // else - buffer empty
+            usleep(sleepDelay);
+        } else {
+            break;
+        }
+    } 
+
+    return element;
+}
+
+
+template <class T>
+bool ProducerConsumerQueue<T>::isDone() {
+    return noMoreElements;
+}
+
+
+template <class T>
+void ProducerConsumerQueue<T>::reset() {
+    //FIXME clear the queue
+    noMoreInput = false;
+    noMoreElements = false;
+}
+
 
 #endif
 

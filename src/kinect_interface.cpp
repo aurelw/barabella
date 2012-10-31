@@ -40,7 +40,12 @@ void KinectInterface::setupGrabber() {
     pcl::OpenNIGrabber::Mode depth_mode = pcl::OpenNIGrabber::OpenNI_Default_Mode;
     pcl::OpenNIGrabber::Mode image_mode = pcl::OpenNIGrabber::OpenNI_Default_Mode;
 
-    grabber = new pcl::OpenNIGrabber();
+    try {
+        grabber = new pcl::OpenNIGrabber();
+    } catch (pcl::PCLIOException& exc) {
+        return;
+    }
+    std::cout << "grabber loaddded!" << std::endl;
     
     // setup callback
     boost::function<void (const CloudConstPtr&) > cloud_cb = boost::bind (&KinectInterface::cloud_callback, this, _1);
