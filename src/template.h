@@ -51,7 +51,7 @@ class FilteredCloudTemplate : public CloudTemplate {
 
     public:
 
-        FilteredCloudTemplate(vSize) :
+        FilteredCloudTemplate(float vSize) :
             CloudTemplate(),
             voxelSize(vSize)
         {
@@ -59,7 +59,7 @@ class FilteredCloudTemplate : public CloudTemplate {
 
         FilteredCloudTemplate() :
             CloudTemplate(),
-            FilteredCloudTemplate(0.01)
+            voxelSize(0.01)
         {
         }
 
