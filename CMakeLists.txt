@@ -17,8 +17,8 @@ set (BARABELLA_VERSION 0.1)
 set (BB_DEBUG_LVL 4)
 
 configure_file (
-    "${PROJECT_SOURCE_DIR}/src/barabella_config.h.in"
-    "${PROJECT_SOURCE_DIR}/src/barabella_config.h"
+    "${PROJECT_SOURCE_DIR}/src/core/barabella_config.h.in"
+    "${PROJECT_SOURCE_DIR}/src/core/barabella_config.h"
 )
 #################
 

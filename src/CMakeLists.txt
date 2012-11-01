@@ -1,4 +1,10 @@
-add_executable(weight_tracker weighttracker.cpp kinect_interface.cpp view3d.cpp floor_extractor.cpp utils.cpp clip.cpp global_options.cpp selection_cube.cpp update_signal.cpp barabella_app.cpp frame_observer.cpp clip_player.cpp tracker.cpp icp_framed_tracker.cpp template.cpp producer_consumer_queue.cpp)
+add_subdirectory (core)
+add_subdirectory (gui)
 
-target_link_libraries(weight_tracker ${PCL_LIBRARIES} ${Boost_LIBRARIES})
+include_directories (./core/)
+include_directories (./gui/)
+
+add_executable (weight_tracker weighttracker.cpp barabella_app.cpp)
+
+target_link_libraries (weight_tracker gui)
 

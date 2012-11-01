@@ -2,4 +2,4 @@ set (core_source_files clip.cpp clip_player.cpp floor_extractor.cpp frame_observ
 
 add_library (core ${core_source_files})
 
-target_link_libraries(core ${PCL_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries (core ${PCL_LIBRARIES} ${Boost_LIBRARIES})
