@@ -70,6 +70,7 @@ void IcpFramedTracker::processFrame() {
     pcl::IterativeClosestPoint<PointT, PointT> icp;
     icp.setInputCloud(templateCloud);
     icp.setInputTarget(targetCloud);
+    icp.setMaximumIterations(maxIterations);
     PointCloud finalCloud;
 
     /* do alignment */

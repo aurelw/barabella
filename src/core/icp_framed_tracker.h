@@ -31,10 +31,11 @@ class IcpFramedTracker : public Tracker {
 
     public:
 
-        IcpFramedTracker() :
+        IcpFramedTracker(int maxIt=100, float boarder=0.3) :
             Tracker(),
-            boarderSize(0.3),
-            isFinished(false)
+            boarderSize(boarder),
+            isFinished(false),
+            maxIterations(maxIt)
         {
         }
 
@@ -60,6 +61,9 @@ class IcpFramedTracker : public Tracker {
         PointCloudConstPtr templateCloud;
         PointCloudConstPtr clipCloud;
         SelectionCube::Ptr searchWindow;
+
+        /* tracking parameters */
+        int maxIterations;
         float boarderSize;
 
         // current GLOBAL transform of the tracked object
