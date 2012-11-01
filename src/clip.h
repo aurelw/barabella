@@ -40,8 +40,8 @@ class Clip : public FrameObserver {
 
         typedef pcl::PointXYZRGBA PointT;
         typedef pcl::PointCloud<PointT> PointCloud;
-        typedef typename PointCloud::Ptr PointCloudPtr;
-        typedef typename PointCloud::ConstPtr PointCloudConstPtr;
+        typedef PointCloud::Ptr PointCloudPtr;
+        typedef PointCloud::ConstPtr PointCloudConstPtr;
 
         typedef boost::shared_ptr<Clip> Ptr;
 

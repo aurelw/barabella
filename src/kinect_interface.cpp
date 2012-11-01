@@ -45,7 +45,6 @@ void KinectInterface::setupGrabber() {
     } catch (pcl::PCLIOException& exc) {
         return;
     }
-    std::cout << "grabber loaddded!" << std::endl;
     
     // setup callback
     boost::function<void (const CloudConstPtr&) > cloud_cb = boost::bind (&KinectInterface::cloud_callback, this, _1);

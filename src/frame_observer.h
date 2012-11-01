@@ -30,7 +30,7 @@ class FrameObserver {
 
         typedef pcl::PointXYZRGBA PointType;
         typedef pcl::PointCloud<PointType> Cloud;
-        typedef typename Cloud::ConstPtr CloudConstPtr;
+        typedef Cloud::ConstPtr CloudConstPtr;
 
         virtual void frameEvent(CloudConstPtr) = 0;
 
@@ -42,7 +42,7 @@ class FrameProvider {
 
         typedef pcl::PointXYZRGBA PointType;
         typedef pcl::PointCloud<PointType> Cloud;
-        typedef typename Cloud::ConstPtr CloudConstPtr;
+        typedef Cloud::ConstPtr CloudConstPtr;
 
         void registerObserver(FrameObserver* observer);
 
