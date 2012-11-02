@@ -25,7 +25,9 @@
 void KinectInterface::cloud_callback(const CloudConstPtr &cld) {
     cloud = cld;
     isStreaming = true;
-    frameEvent(cloud);
+    if (cloud != NULL) {
+        frameEvent(cloud);
+    }
 }
 
 
