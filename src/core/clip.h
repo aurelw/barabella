@@ -50,9 +50,17 @@ class Clip : public FrameObserver {
         Clip() :
             loadThread(NULL),
             isRecording(false),
+            loadThreadRunning(false),
             frameCounter(0)
         {
         };
+
+        ~Clip() {
+            if (loadThreadRunning) {
+                loadThread->interrupt();
+                loadThread->join();
+            }
+        }
 
         void setDirectory(std::string dir);
         void load();
@@ -85,6 +93,7 @@ class Clip : public FrameObserver {
         PointCloudPtr lastCloud;
         ProducerConsumerQueue<PointCloudPtr> loadQueue;
         boost::thread* loadThread;
+        bool loadThreadRunning;
         void loadFilesToQueue();
 
         /* saving */

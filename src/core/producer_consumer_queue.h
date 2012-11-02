@@ -73,8 +73,9 @@ void ProducerConsumerQueue<T>::push(T element, bool isLast=false) {
         } 
         mutex.unlock();
         if (bufferSize >= maxSize) { // else - buffer full
-            usleep(sleepDelay);
-            //boost::this_thread::sleep(boost::posix_time::milliseconds(sleepDelay));
+            //usleep(sleepDelay);
+            // this is interruptable
+            boost::this_thread::sleep(boost::posix_time::milliseconds(sleepDelay));
         } else {
             break;
         }
@@ -99,7 +100,9 @@ T ProducerConsumerQueue<T>::pop() {
         } 
         mutex.unlock();
         if (bufferSize == 0) { // else - buffer empty
-            usleep(sleepDelay);
+            //usleep(sleepDelay);
+            // this is interruptable
+            boost::this_thread::sleep(boost::posix_time::milliseconds(sleepDelay));
         } else {
             break;
         }

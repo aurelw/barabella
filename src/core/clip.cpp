@@ -96,12 +96,16 @@ void Clip::saveCloud(PointCloudConstPtr cloud, const string& fname) {
 
 
 void Clip::begin() {
-    frameIt = frameFiles.begin();
-    /* reset and init queue */
+    /* reset and init queue and producer thread */
+    if (loadThreadRunning) {
+        loadThread->interrupt();
+        loadThread->join();
+    }
     loadQueue.reset();
 
     /* start producer thread */
     loadThread = new boost::thread(boost::bind(&Clip::loadFilesToQueue, this));
+    loadThreadRunning = true;
 }
 
 
@@ -125,6 +129,7 @@ void Clip::loadFilesToQueue() {
         /* to next file */
         frameIt++;
     }
+    loadThreadRunning = false;
 }
 
 
