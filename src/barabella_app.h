@@ -63,10 +63,14 @@ class BarabellaApp {
             sCube(new SelectionCube),
             cloudTemplate(new FilteredCloudTemplate) 
         {
+
             kinIface.waitForFirstFrame();
+            mainCloud = kinIface.getLastCloud();
             initView3d();
             initTemplates();
-            operationMode = STREAMING;
+
+            /* set app operation mode */
+            setOperationMode(STREAMING);
 
             /* FIXME player test */
             clip = new Clip();
@@ -79,7 +83,7 @@ class BarabellaApp {
             if (gOptions->doPlayBack) {
                 clipPlayer.setClip(clip);
                 clipPlayer.start();
-                operationMode = CLIPPLAYBACK;
+                setOperationMode(CLIPPLAYBACK);
             }
 
         }

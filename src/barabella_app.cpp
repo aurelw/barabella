@@ -22,8 +22,8 @@
 
 void BarabellaApp::initView3d() {
     view3d.setCube(sCube);
-    mainCloud = kinIface.getLastCloud();
-    view3d.addCloud(mainCloud);
+    view3d.setMainCloud(mainCloud);
+    view3d.setDrawMode(View3D::NORMAL);
 }
 
 
@@ -48,12 +48,15 @@ void BarabellaApp::setOperationMode(OperationMode mode) {
     switch (operationMode) {
 
         case STREAMING:
+            view3d.setDrawMode(View3D::NORMAL);
             break;
 
         case CLIPPLAYBACK:
+            view3d.setDrawMode(View3D::NORMAL);
             break;
 
         case TRACKING:
+            view3d.setDrawMode(View3D::TRACKING);
             startTracker();
             break;
     }
@@ -85,7 +88,7 @@ void BarabellaApp::spinStreaming() {
     mainCloud = kinIface.getLastCloud();
 
     if (!displayTemplate) {
-        view3d.updateCloud(mainCloud);
+        view3d.setMainCloud(mainCloud);
     }
 
     view3d.spinOnce();
@@ -116,7 +119,7 @@ void BarabellaApp::spinStreaming() {
 
 void BarabellaApp::spinClipPlayBack() {
     mainCloud = clipPlayer.getLastCloud();
-    view3d.updateCloud(mainCloud);
+    view3d.setMainCloud(mainCloud);
     view3d.spinOnce();
 }
 
@@ -127,7 +130,7 @@ void BarabellaApp::spinTracking() {
 
         /* display results of current frame */
         mainCloud = tracker.getCurrentCloud();
-        view3d.updateCloud(mainCloud);
+        view3d.setMainCloud(mainCloud);
         view3d.setCube(tracker.getSearchWindow());
         view3d.setTrackedCenter(
         //tracker.getSearchWindow()->getGlobalPosition());
@@ -163,7 +166,7 @@ void BarabellaApp::updateFloor() {
 void BarabellaApp::extractTemplate() {
     cloudTemplate->setPointCloud(sCube->filterCloud(*mainCloud));
     cloudTemplate->center = sCube->getGlobalPosition();
-    view3d.addTemplate(cloudTemplate->getPointCloud());
+    view3d.setTemplateCloud(cloudTemplate->getPointCloud());
     view3d.setDrawMode(View3D::TEMPLATE);
 }
 

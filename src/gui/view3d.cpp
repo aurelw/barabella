@@ -28,83 +28,123 @@ void View3D::spinOnce() {
 }
 
 
-void View3D::updateCloud(PointCloudConstPtr cloud) {
-    if (cloud != NULL) {
-        mainCloud = cloud;
-        visualizer.updatePointCloud(mainCloud, "mainCloud");
+void View3D::setMainCloud(PointCloudConstPtr cloud) {
+    mainCloud = cloud;
+    updateMainCloud();
+}
+
+
+void View3D::updateMainCloud() {
+    if (mainCloudAdded) {
+        if (drawMainCloud && mainCloud != NULL) {
+            visualizer.updatePointCloud(mainCloud, "mainCloud");
+        } else {
+            visualizer.removePointCloud("mainCloud");
+            mainCloudAdded = false;
+        }
+    } else if (drawMainCloud && mainCloud != NULL) {
+        visualizer.addPointCloud(mainCloud, "mainCloud");
+        mainCloudAdded = true;
     }
 }
 
 
-void View3D::addCloud(PointCloudConstPtr cloud) {
-    mainCloud = cloud;
-    visualizer.addPointCloud(mainCloud, "mainCloud");
+void View3D::setTemplateCloud(PointCloudConstPtr cloud) {
+    templateCloud = cloud;
+    updateTemplateCloud();
 }
 
 
-void View3D::addTemplate(PointCloudConstPtr cloud) {
-    visualizer.removePointCloud("templateCloud");
-    templateCloud = cloud;
+void View3D::updateTemplateCloud() {
+    if (templateCloudAdded) {
+        if (drawTemplateCloud && mainCloud != NULL) {
+            visualizer.updatePointCloud(templateCloud, "templateCloud");
+        } else {
+            visualizer.removePointCloud("templateCloud");
+            templateCloudAdded = false;
+        }
+    } else if (drawTemplateCloud && mainCloud != NULL) {
+        visualizer.addPointCloud(templateCloud, "templateCloud");
+        templateCloudAdded = true;
+    }
 }
 
 
 void View3D::setTrackedCenter(const Eigen::Vector3f& v) {
     trackedCenter = v;
+    updateTrackedCenter();
+}
+
+
+void View3D::updateTrackedCenter() {
     visualizer.removeShape("trackingCenter");
-    visualizer.addSphere(vecToPoint(trackedCenter), 0.025, 0.0, 0.8, 0.0, 
+    if (drawTrackedCenter) {
+        visualizer.addSphere(vecToPoint(trackedCenter), 0.025, 0.0, 0.8, 0.0,
             "trackingCenter");
+    }
 }
 
 
 void View3D::setDrawMode(DrawMode mode) {
-    visualizer.removePointCloud("templateCloud");
-    visualizer.removePointCloud("mainCloud");
+    drawMainCloud = false;
+    drawTemplateCloud = false;
+    drawTrackedCenter = false;
+    drawSelectionCube = false;
+    drawFloor = false;
 
     switch (mode) {
         case NORMAL:
-            visualizer.addPointCloud(mainCloud, "mainCloud");
+            drawMainCloud = true;
+            drawSelectionCube = true;
+            drawFloor = true;
             break;
         case TEMPLATE:
-            visualizer.addPointCloud(templateCloud, "templateCloud");
+            drawTemplateCloud = true;
+            drawSelectionCube = true;
+            drawFloor = true;
             break;
+        case TRACKING:
+            drawMainCloud = true;
+            drawSelectionCube = true;
+            drawFloor = true;
+            drawTrackedCenter = true;
     }
 
+    updateMainCloud();
+    updateTemplateCloud();
+    updateSelectionCube();
+    updateFloor();
+    updateTrackedCenter();
 }
 
 
 void View3D::setFloor(pcl::ModelCoefficients::Ptr coefficients) {
-    visualizer.removeShape("floor");
-    visualizer.addPlane(*coefficients, "floor");
-
     cloudTransform = affineFromPlane(coefficients);
-    visualizer.addCoordinateSystem(0.5, cloudTransform);
+    floorCoefficients = coefficients;
+    updateFloor();
+}
 
-    /* draw an arrow */
-    pcl::PointXYZ p0, p1;
-    p0.x = p0.y = p0.z = 0.0;
-    p1.x = -coefficients->values[0];
-    p1.y = -coefficients->values[1];
-    p1.z = -coefficients->values[2];
 
+void View3D::updateFloor() {
+    visualizer.removeShape("floor");
     visualizer.removeShape("floor_line");
-    visualizer.addLine(p0, p1, "floor_line");
 
-    /* transform the main cloud */
-    // doesn't work as expected, only for PointCloud2 Foo 
-    /*
-    pcl::visualization::PointCloudGeometryHandler<PointT>::Ptr handl
-        (new pcl::visualization::PointCloudGeometryHandlerXYZ<PointT>(mainCloud));
-    gemHandl = handl;
+    if (drawFloor && floorCoefficients != NULL) {
+        //FIXME also remove this coordinate system
+        //FIXME transformation bug in PCLVisualizer
+        visualizer.addCoordinateSystem(0.5, cloudTransform);
 
-    Eigen::Vector4f translation(1.0, 1.0, 1.0, 1.0);
-    Eigen::Quaternionf rotation(cloudTransform.rotation());
+        visualizer.addPlane(*floorCoefficients, "floor");
 
-    visualizer.removePointCloud("mainCloud");
-    visualizer.addPointCloud(mainCloud, *gemHandl, 
-            translation,
-            rotation,
-            "mainCloud");
-    */
+        /* draw an arrow */
+        pcl::PointXYZ p0, p1;
+        p0.x = p0.y = p0.z = 0.0;
+        p1.x = -floorCoefficients->values[0];
+        p1.y = -floorCoefficients->values[1];
+        p1.z = -floorCoefficients->values[2];
+        visualizer.addLine(p0, p1, "floor_line");
+    }
+
 }
 
 
@@ -113,12 +153,14 @@ void View3D::updateSelectionCube() {
     std::cout << "View3D::updateSelectionCube" << std::endl;
 #endif
     visualizer.removeShape("selection_cube");
-    visualizer.addCube(sCube->getGlobalPosition(),
+    if (drawSelectionCube && sCube != NULL) {
+        visualizer.addCube(sCube->getGlobalPosition(),
             sCube->getGlobalRotation(),
             sCube->getSx(),
             sCube->getSy(),
             sCube->getSz(),
             "selection_cube");
+    }
 }
 
 

@@ -67,17 +67,29 @@ class View3D {
         enum DrawMode {
             NORMAL,
             TEMPLATE,
+            TRACKING
         };
 
 
-        View3D() {
+        View3D() :
+                mainCloud(new PointCloud),
+                templateCloud(new PointCloud) 
+        {
+            /* basic rendering */
             visualizer.addCoordinateSystem(1.0);
             visualizer.setBackgroundColor(0.2, 0.2, 0.2);
+
             registerCallbacks();
 
+            /* init render items */
             cloudTransform.setIdentity();
             //cloudTransform.rotate(Eigen::AngleAxisf(1.5707963267948966,
             //            Eigen::Vector3f(1.0, 0.0, 0.0)));
+            
+
+            /* item render options */
+            mainCloudAdded = false;
+            templateCloudAdded = false;
 
             /* interaction and flags */
             state = START;
@@ -88,14 +100,15 @@ class View3D {
         }
 
         void spinOnce();
-        void updateCloud(PointCloudConstPtr cloud);
-        void addCloud(PointCloudConstPtr cloud);
+
+        /* set render items */
+        void setMainCloud(PointCloudConstPtr cloud);
         void setFloor(pcl::ModelCoefficients::Ptr coefficients);
         void setCube(SelectionCube::Ptr cube);
-
-        void addTemplate(PointCloudConstPtr cloud);
+        void setTemplateCloud(PointCloudConstPtr cloud);
         void setTrackedCenter(const Eigen::Vector3f& v);
 
+        /* set render parameters */
         void setDrawMode(DrawMode mode);
 
         /* interaction flags */
@@ -113,21 +126,36 @@ class View3D {
         PointCloudConstPtr mainCloud;
         Eigen::Affine3f cloudTransform;
         pcl::visualization::PointCloudGeometryHandler<PointT>::ConstPtr gemHandl;
+        void updateMainCloud();
+        bool drawMainCloud;
+        bool mainCloudAdded;
+
+        /* the floor */
+        pcl::ModelCoefficients::Ptr floorCoefficients;
+        void updateFloor();
+        bool drawFloor;
 
         /* a selection cube */
         SelectionCube::Ptr sCube;
         void moveCube(float dx, float dy, float dz);
-        void updateSelectionCube();
         float edit_stepsize = 0.025;
+        void updateSelectionCube();
+        bool drawSelectionCube;
 
         /* template */
         PointCloudConstPtr templateCloud;
+        void updateTemplateCloud();
+        bool drawTemplateCloud;
+        bool templateCloudAdded;
+
+        /* tracking */
+        Eigen::Vector3f trackedCenter;
+        void updateTrackedCenter();
+        bool drawTrackedCenter;
 
         /* user input and draw states */
         InteractionState state;
 
-        /* tracking */
-        Eigen::Vector3f trackedCenter;
 };
 
 
