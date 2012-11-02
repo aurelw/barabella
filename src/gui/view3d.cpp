@@ -91,17 +91,20 @@ void View3D::setDrawMode(DrawMode mode) {
     drawTrackedCenter = false;
     drawSelectionCube = false;
     drawFloor = false;
+    drawCubeCenter = false;
 
     switch (mode) {
         case NORMAL:
             drawMainCloud = true;
             drawSelectionCube = true;
             drawFloor = true;
+            drawCubeCenter = true;
             break;
         case TEMPLATE:
             drawTemplateCloud = true;
             drawSelectionCube = true;
             drawFloor = true;
+            drawCubeCenter = true;
             break;
         case TRACKING:
             drawMainCloud = true;
@@ -153,6 +156,8 @@ void View3D::updateSelectionCube() {
     std::cout << "View3D::updateSelectionCube" << std::endl;
 #endif
     visualizer.removeShape("selection_cube");
+    visualizer.removeShape("cubeCenter");
+
     if (drawSelectionCube && sCube != NULL) {
         visualizer.addCube(sCube->getGlobalPosition(),
             sCube->getGlobalRotation(),
@@ -160,6 +165,11 @@ void View3D::updateSelectionCube() {
             sCube->getSy(),
             sCube->getSz(),
             "selection_cube");
+        if (drawCubeCenter) {
+            visualizer.addSphere(vecToPoint(sCube->getGlobalPosition()),
+                    0.020, 0.9, 0.9, 0.0,
+                    "cubeCenter");
+        }
     }
 }
 

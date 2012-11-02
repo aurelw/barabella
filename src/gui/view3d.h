@@ -141,6 +141,7 @@ class View3D {
         float edit_stepsize = 0.025;
         void updateSelectionCube();
         bool drawSelectionCube;
+        bool drawCubeCenter;
 
         /* template */
         PointCloudConstPtr templateCloud;
