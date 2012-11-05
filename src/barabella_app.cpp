@@ -22,7 +22,6 @@
 
 void BarabellaApp::initView3d() {
     view3d.setCube(sCube);
-    view3d.setMainCloud(mainCloud);
     view3d.setDrawMode(View3D::NORMAL);
 }
 
@@ -35,6 +34,17 @@ void BarabellaApp::initTemplates() {
 
 
 void BarabellaApp::startTracker() {
+    /* set the floor by the first frame in the clip */
+    clip->load();
+    clip->begin();
+    mainCloud = clip->next();
+    floorEx.setInputCloud(mainCloud);
+    floorEx.extract(floorCoefficients);
+    floorTrans = affineFromPlane(floorCoefficients);
+    view3d.setFloor(floorCoefficients);
+    clip->begin();
+
+    /* init tracker */
     tracker.setClip(clip);
     tracker.setCoordinateFrame(floorTrans.inverse()); 
     tracker.setTemplate(cloudTemplate);

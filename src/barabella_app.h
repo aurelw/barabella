@@ -64,8 +64,11 @@ class BarabellaApp {
             cloudTemplate(new FilteredCloudTemplate) 
         {
 
-            kinIface.waitForFirstFrame();
-            mainCloud = kinIface.getLastCloud();
+            if (kinIface.init()) {
+                kinIface.waitForFirstFrame();
+                mainCloud = kinIface.getLastCloud();
+            }
+
             initView3d();
             initTemplates();
 
