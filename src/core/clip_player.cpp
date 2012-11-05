@@ -74,10 +74,37 @@ void ClipPlayer::reset() {
 
 
 void ClipPlayer::runPlayer() {
-    //FIXME proper timing and load buffer
+    /* variables for proper timing in playback */
+    bool first_frame = true;
+    long lstamp = 0;
+    long cstamp = 0;
+    boost::system_time ltime;
+    boost::system_time ctime;
+
+
     while (!stopThread) {
         if (isPlay) {
+            /* get next frame */
             lastCloud = clip->next();
+
+            /* get time stamp and time difference */
+            lstamp = cstamp;
+            //FIXME get timestamp from frame
+            cstamp = cstamp + 33; // ~30 fps;
+
+            /* first frame - no sleep */
+            if (first_frame) {
+                ctime = boost::get_system_time();
+                first_frame = false;
+            } else {
+                /* sleep time duration till next frame */
+                ltime = ctime;
+                ctime = boost::get_system_time();
+                boost::posix_time::milliseconds dstamp(cstamp - lstamp);
+                boost::thread::sleep(ltime + dstamp);
+            }
+
+            /* frame evenet */
             frameEvent(lastCloud);
         } else {
             usleep(50);
