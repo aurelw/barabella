@@ -90,6 +90,7 @@ class View3D {
             /* item render options */
             mainCloudAdded = false;
             templateCloudAdded = false;
+            floorCoordsAdded = false;
 
             /* interaction and flags */
             state = START;
@@ -134,6 +135,7 @@ class View3D {
         pcl::ModelCoefficients::Ptr floorCoefficients;
         void updateFloor();
         bool drawFloor;
+        bool floorCoordsAdded;
 
         /* a selection cube */
         SelectionCube::Ptr sCube;

@@ -131,11 +131,16 @@ void View3D::setFloor(pcl::ModelCoefficients::Ptr coefficients) {
 void View3D::updateFloor() {
     visualizer.removeShape("floor");
     visualizer.removeShape("floor_line");
+    if (floorCoordsAdded) {
+        visualizer.removeCoordinateSystem();
+        floorCoordsAdded = false;
+    }
 
     if (drawFloor && floorCoefficients != NULL) {
         //FIXME also remove this coordinate system
         //FIXME transformation bug in PCLVisualizer
         visualizer.addCoordinateSystem(0.5, cloudTransform);
+        floorCoordsAdded = true;
 
         visualizer.addPlane(*floorCoefficients, "floor");
 
