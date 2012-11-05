@@ -44,12 +44,13 @@ class KinectInterface : public FrameProvider {
 
 
         KinectInterface() :
-            isStreaming(false)
+            isStreaming(false),
+            isConnected(false)
         {
-            setupGrabber();
         }
 
 
+        bool init();
         void waitForFirstFrame();
         CloudConstPtr getLastCloud();
 
@@ -61,6 +62,7 @@ class KinectInterface : public FrameProvider {
         CloudConstPtr cloud;
 
         bool isStreaming;
+        bool isConnected;
 };
 
 #endif

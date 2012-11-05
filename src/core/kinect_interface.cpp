@@ -24,8 +24,8 @@
 
 void KinectInterface::cloud_callback(const CloudConstPtr &cld) {
     cloud = cld;
-    isStreaming = true;
     if (cloud != NULL) {
+        isStreaming = true;
         frameEvent(cloud);
     }
 }
@@ -54,6 +54,13 @@ void KinectInterface::setupGrabber() {
 
     // start 
     grabber->start();
+    isConnected = true;
+}
+
+
+bool KinectInterface::init() {
+    setupGrabber();
+    return isConnected;
 }
 
 
