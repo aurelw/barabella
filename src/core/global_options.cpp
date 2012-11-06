@@ -27,11 +27,14 @@ GlobalOptions::GlobalOptions(int argc, char** argv) {
     doPlayBack =  pcl::console::find_switch(argc, argv, "-p");
 
     clipDirectory = "/tmp/foobar/";
-    selectionCubeSettingsPath = "/tmp/barabella_scube";
+    pcl::console::parse(argc, argv, "--clip", clipDirectory);
 
+    selectionCubeSettingsPath = "/tmp/barabella_scube";
+    pcl::console::parse(argc, argv, "--scube", selectionCubeSettingsPath);
     validSCubePath = boost::filesystem::is_regular_file(selectionCubeSettingsPath);
 
     traceCSVPath = "/tmp/bb_trace.csv";
+    pcl::console::parse(argc, argv, "--trace", traceCSVPath);
 }
 
 

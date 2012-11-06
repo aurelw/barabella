@@ -58,6 +58,7 @@ void BarabellaApp::setOperationMode(OperationMode mode) {
     switch (operationMode) {
 
         case STREAMING:
+            view3d.setCube(sCube);
             view3d.setDrawMode(View3D::NORMAL);
             break;
 
