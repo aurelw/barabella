@@ -43,6 +43,8 @@ class GlobalOptions {
 
         /* tracking */
         std::string traceCSVPath;
+        std::string templatePath;
+        bool validTemplatePath;
 
 };
 

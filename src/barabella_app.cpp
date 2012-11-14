@@ -30,6 +30,9 @@ void BarabellaApp::initTemplates() {
     if (gOptions->validSCubePath) {
         sCube->loadFromFile(gOptions->selectionCubeSettingsPath);
     }
+    if (gOptions->validTemplatePath) {
+        cloudTemplate->loadFromFile(gOptions->templatePath);
+    }
 }
 
 
@@ -184,5 +187,6 @@ void BarabellaApp::extractTemplate() {
 
 void BarabellaApp::saveTemplateSettings() {
     sCube->saveToFile(gOptions->selectionCubeSettingsPath);
+    cloudTemplate->saveToFile(gOptions->templatePath); 
 }
 

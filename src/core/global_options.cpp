@@ -35,6 +35,12 @@ GlobalOptions::GlobalOptions(int argc, char** argv) {
 
     traceCSVPath = "/tmp/bb_trace.csv";
     pcl::console::parse(argc, argv, "--trace", traceCSVPath);
+
+    templatePath = "/tmp/template";
+    pcl::console::parse(argc, argv, "--template", templatePath);
+    validTemplatePath = boost::filesystem::is_regular_file(templatePath + ".pcd");
+    validTemplatePath = validTemplatePath && 
+        boost::filesystem::is_regular_file(templatePath + ".meta");
 }
 
 

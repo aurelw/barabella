@@ -17,7 +17,9 @@
  *   along with Barabella.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "boost/smart_ptr.hpp"
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/smart_ptr.hpp>
 
 #include <pcl/common/common_headers.h>
 
@@ -40,9 +42,24 @@ class CloudTemplate {
         virtual void setPointCloud(PointCloudConstPtr cloud);
         virtual PointCloudConstPtr getPointCloud();
 
+        virtual void saveToFile(std::string path);
+        virtual void loadFromFile(std::string path);
+
     protected:
 
         PointCloudConstPtr templateCloud;
+
+    /* serialization */
+    protected:
+        friend class boost::serialization::access;
+
+        template<class Archive>
+        void serialize(Archive & ar, const unsigned int version) {
+            ar & center[0];
+            ar & center[1];
+            ar & center[2];
+        }
+
 };
 
 

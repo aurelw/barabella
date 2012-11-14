@@ -19,12 +19,49 @@
 
 #include "template.h"
 
+#include <iostream>
+#include <fstream>
+
 #include <pcl/filters/voxel_grid.h>
+#include <pcl/io/pcd_io.h>
+
 
 
 void CloudTemplate::setPointCloud(PointCloudConstPtr cloud) {
     templateCloud = cloud;
 }
+
+
+void CloudTemplate::saveToFile(std::string path) {
+    std::string pcdpath = path + ".pcd";
+    std::string metapath = path + ".meta";
+
+    /* save meta data for template */
+    std::ofstream ofs(metapath.c_str());
+    boost::archive::text_oarchive oa(ofs);
+    oa << *this;
+
+    /* save pcd */
+    pcl::PCDWriter writer;
+    writer.writeBinaryCompressed<PointT>(pcdpath, *templateCloud);
+}
+
+
+void CloudTemplate::loadFromFile(std::string path) {
+    std::string pcdpath = path + ".pcd";
+    std::string metapath = path + ".meta";
+
+    /* load meta */
+    std::ifstream ifs(path.c_str());
+    boost::archive::text_iarchive ia(ifs);
+    ia >> *this;
+
+    /* load pcd */
+    PointCloudPtr cloud (new PointCloud);
+    pcl::io::loadPCDFile<PointT>(pcdpath, *cloud);
+    templateCloud = cloud;
+}
+
 
 
 CloudTemplate::PointCloudConstPtr CloudTemplate::getPointCloud() {
