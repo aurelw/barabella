@@ -18,9 +18,9 @@
  */
 #include <iostream>
 
-#include <boost/signals.hpp>
+#include <boost/signals2.hpp>
 #include <boost/bind.hpp>
-#include <boost/signals/connection.hpp>
+#include <boost/signals2/connection.hpp>
 
 #include <pcl/common/common_headers.h>
 
@@ -32,8 +32,8 @@
 class UpdateSignal {
 
     public: 
-        typedef boost::signal<void ()>  signal_t;
-        typedef boost::signals::connection  connection_t;
+        typedef boost::signals2::signal<void ()>  signal_t;
+        typedef boost::signals2::connection  connection_t;
 
     public:
         connection_t connect(signal_t::slot_function_type subscriber);
