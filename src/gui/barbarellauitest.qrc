@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="BarbarellauiTest">
+    <file>save2.png</file>
+    <file>record.png</file>
+    <file>open_folder.gif</file>
+    <file>player_stop.png</file>
+    <file>Pause-Hot-icon.png</file>
+  </qresource>
+</RCC>
