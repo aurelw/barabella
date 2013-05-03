@@ -173,9 +173,17 @@ void BarabellaApp::updateFloor() {
 #if 0
     /* test floor extraction */ 
     std::vector<pcl::ModelCoefficients> planes = floorEx.extract(10);
+    std::cout << "Planes found #" << planes.size() << std::endl;
+
+    int i = 0;
+    for (auto plane : planes) {
+        std::stringstream ss; 
+        ss << "plane_" << i++;
+        view3d.visualizer.addPlane(plane, ss.str());
+    }
+
     pcl::ModelCoefficients plane = planes[0];
     floorEx.refine(plane);
-    std::cout << "Planes found #" << planes.size() << std::endl;
 #endif
 
     floorTrans = affineFromPlane(floorCoefficients);

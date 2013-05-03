@@ -117,10 +117,11 @@ class View3D {
         bool flagExtractTemplate;
         bool flagTrack;
 
-    private:
-
         /* pcl visualizer */
         pcl::visualization::PCLVisualizer visualizer;
+
+    private:
+
         void registerCallbacks();
 
         /* the raw main cloud */
