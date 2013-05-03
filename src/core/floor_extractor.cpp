@@ -193,6 +193,29 @@ pcl::ModelCoefficients FloorExtractor::refine(
 }
 
 
+pcl::ModelCoefficients FloorExtractor::closestPlane(
+        const PointT point, const std::vector<pcl::ModelCoefficients> planes)
+{
+    pcl::ModelCoefficients closestPlane;
+    double closetDistance = 42000;
+    for (auto plane : planes) {
+
+        double distance = pcl::pointToPlaneDistance(point,
+                coefficients->values[0],
+                coefficients->values[1],
+                coefficients->values[2],
+                coefficients->values[3]);
+
+        if (distance < closetDistance) {
+            closetDistance = distance;
+            closestPlane = plane;
+        }
+    }
+
+    return closestPlane;
+}
+
+
 bool FloorExtractor::checkFloorPlane(pcl::ModelCoefficients::Ptr coe) {
     float x = coe->values[0];
     float y = coe->values[1];
