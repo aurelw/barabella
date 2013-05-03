@@ -20,6 +20,7 @@
 
 #include "floor_extractor.h"
 
+#include <pcl/sample_consensus/sac_model_plane.h>
 
 
 void FloorExtractor::printCoefficients(pcl::ModelCoefficients::Ptr coe) {
@@ -144,8 +145,51 @@ std::vector<pcl::ModelCoefficients> FloorExtractor::extract(
 pcl::ModelCoefficients FloorExtractor::refine(
         pcl::ModelCoefficients::Ptr coefficients)
 {
-    //TODO refine plane by better fitting to input cloud
-    return *coefficients;
+    float initialThresh = 0.02;
+    int finalIterations = 1000;
+    float finalThresh = 0.01;
+
+    /* create a cloud which roughly compromises the plane */
+    pcl::PointIndices::Ptr indices_filtered (new pcl::PointIndices ());
+
+    for (int i=0; i<inputCloud->points.size(); i++) {
+        PointT point = inputCloud->points[i];
+        double distance = pcl::pointToPlaneDistance(point,
+                coefficients->values[0],
+                coefficients->values[1],
+                coefficients->values[2],
+                coefficients->values[3]);
+        if (distance < initialThresh) {
+            indices_filtered->indices.push_back(i);
+        }
+    }
+
+    PointCloudPtr cloud_filtered (new PointCloud(*inputCloud));
+    pcl::ExtractIndices<PointT> extract;
+    extract.setInputCloud (cloud_filtered);
+    extract.setIndices (indices_filtered);
+    extract.setNegative (true);
+    extract.filter (*cloud_filtered);
+
+
+    /*** refine model with ransac ***/
+
+    /* preapre ransac segmentation */
+    pcl::SACSegmentation<PointT> seg;
+    seg.setOptimizeCoefficients (true);
+    seg.setModelType (pcl::SACMODEL_PLANE);
+    seg.setMethodType (pcl::SAC_RANSAC);
+    seg.setMaxIterations (finalIterations);
+    seg.setDistanceThreshold (finalThresh);
+
+    pcl::ModelCoefficients newPlaneCoeff;
+
+    /* segment the largest plane */
+    pcl::PointIndices::Ptr inliers (new pcl::PointIndices ());
+    seg.setInputCloud (cloud_filtered);
+    seg.segment (*inliers, newPlaneCoeff);
+
+    return newPlaneCoeff;
 }
 
 
