@@ -41,11 +41,12 @@ void FloorExtractor::extract(pcl::ModelCoefficients::Ptr coefficients) {
     // the model
     pcl::PointIndices::Ptr inliers (new pcl::PointIndices ());
 
-    // create sef object
+    // create seg object
     pcl::SACSegmentation<PointT> seg;
 
     // Optional
     seg.setOptimizeCoefficients (true);
+
     // Mandatory
     seg.setModelType (pcl::SACMODEL_PLANE);
     seg.setMethodType (pcl::SAC_RANSAC);
@@ -85,6 +86,66 @@ void FloorExtractor::extract(pcl::ModelCoefficients::Ptr coefficients) {
         extract.filter (*cloud_filtered);
     }
 
+}
+
+
+std::vector<pcl::ModelCoefficients> FloorExtractor::extract(
+        const int maxPlanes, const int iterations)
+{
+    // result set of planes
+    std::vector<pcl::ModelCoefficients> planes;
+
+    /* additional parameters */
+    const float distanceThres = 0.01;
+
+    // create temporary clouds
+    PointCloudPtr cloud_filtered (new PointCloud(*inputCloud));
+
+    /* preapre ransac segmentation */
+    pcl::SACSegmentation<PointT> seg;
+    seg.setOptimizeCoefficients (true);
+    seg.setModelType (pcl::SACMODEL_PLANE);
+    seg.setMethodType (pcl::SAC_RANSAC);
+    seg.setMaxIterations (iterations);
+    seg.setDistanceThreshold (distanceThres);
+
+    /* Create the filtering object */
+    pcl::ExtractIndices<PointT> extract;
+
+    for (int i=0; i<maxPlanes; i++) {
+
+        /* coeffitients for the current plane */
+        pcl::ModelCoefficients coefficients;
+
+        /* segment the largest plane */
+        pcl::PointIndices::Ptr inliers (new pcl::PointIndices ());
+        seg.setInputCloud (cloud_filtered);
+        seg.segment (*inliers, coefficients);
+
+        /* no plane left to segment */
+        if (inliers->indices.size() == 0) {
+            break;
+        }
+
+        /* add plane to result set */
+        planes.push_back(coefficients);
+
+        /* extract inliers */
+        extract.setInputCloud (cloud_filtered);
+        extract.setIndices (inliers);
+        extract.setNegative (true);
+        extract.filter (*cloud_filtered);
+    }
+
+    return planes;
+}
+
+
+pcl::ModelCoefficients FloorExtractor::refine(
+        pcl::ModelCoefficients::Ptr coefficients)
+{
+    //TODO refine plane by better fitting to input cloud
+    return *coefficients;
 }
 
 

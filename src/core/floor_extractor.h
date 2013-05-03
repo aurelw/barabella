@@ -45,6 +45,9 @@ class FloorExtractor {
 
         void setInputCloud(PointCloudConstPtr cloud);
         void extract(pcl::ModelCoefficients::Ptr coefficients);
+        std::vector<pcl::ModelCoefficients> extract(const int maxPlanes=10, 
+                const int iterations=100);
+        pcl::ModelCoefficients refine(pcl::ModelCoefficients::Ptr coefficients);
 
 
     private:
