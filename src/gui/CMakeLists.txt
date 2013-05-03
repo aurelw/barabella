@@ -3,6 +3,8 @@ include_directories (../core/)
 ### PCL 3d view ###
 set (gui_source_files view3d.cpp)
 
+set (BUILD_QTGUI false)
+if ( BUILD_QTGUI )
 
 ### Qt GUI ###
 FIND_PACKAGE(Qt4 REQUIRED)
@@ -32,4 +34,9 @@ FIND_PACKAGE(VTK)
 
 add_executable (qtgui main.cpp)
 target_link_libraries (qtgui QVTK gui)
+
+endif ( BUILD_QTGUI )
+
+add_library (gui ${gui_source_files} )
+target_link_libraries (gui core)
 
