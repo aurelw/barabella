@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(barabella)
 
+# compiler options
+add_definitions("-std=gnu++11")
+
 # deal with pcl
 find_package(PCL 1.6 REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
