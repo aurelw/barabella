@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <iostream>
 
+#include <pcl/pcl_base.h>
+#include <pcl/common/common.h>
 #include <pcl/point_types.h>
 #include <pcl/ModelCoefficients.h>
 

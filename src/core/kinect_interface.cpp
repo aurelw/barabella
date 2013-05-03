@@ -19,6 +19,7 @@
 
 #include "kinect_interface.h"
 
+
 #include <boost/foreach.hpp>
 
 
@@ -44,7 +45,7 @@ void KinectInterface::setupGrabber() {
 
     try {
         grabber = new pcl::OpenNIGrabber();
-    } catch (pcl::PCLIOException& exc) {
+    } catch (pcl::IOException& exc) {
         return;
     }
     
