@@ -169,6 +169,15 @@ void BarabellaApp::spinTracking() {
 void BarabellaApp::updateFloor() {
     floorEx.setInputCloud(mainCloud);
     floorEx.extract(floorCoefficients);
+
+#if 0
+    /* test floor extraction */ 
+    std::vector<pcl::ModelCoefficients> planes = floorEx.extract(10);
+    pcl::ModelCoefficients plane = planes[0];
+    floorEx.refine(plane);
+    std::cout << "Planes found #" << planes.size() << std::endl;
+#endif
+
     floorTrans = affineFromPlane(floorCoefficients);
     // set the transformation of the selection cube
     sCube->setCoordinateFrame(floorTrans);

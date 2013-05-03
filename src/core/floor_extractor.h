@@ -47,11 +47,11 @@ class FloorExtractor {
         void extract(pcl::ModelCoefficients::Ptr coefficients);
         std::vector<pcl::ModelCoefficients> extract(const int maxPlanes=10, 
                 const int iterations=100);
-        pcl::ModelCoefficients refine(pcl::ModelCoefficients::Ptr coefficients);
+        pcl::ModelCoefficients refine(const pcl::ModelCoefficients& coefficients);
 
         /* just a helper which returns extracts the closest plane to a point */
         pcl::ModelCoefficients closestPlane(const PointT point,
-                const std::vector<pcl::ModelCoefficients>) planes;
+                const std::vector<pcl::ModelCoefficients> planes);
 
 
     private:

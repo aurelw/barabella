@@ -143,7 +143,7 @@ std::vector<pcl::ModelCoefficients> FloorExtractor::extract(
 
 
 pcl::ModelCoefficients FloorExtractor::refine(
-        pcl::ModelCoefficients::Ptr coefficients)
+        const pcl::ModelCoefficients& coefficients)
 {
     float initialThresh = 0.02;
     int finalIterations = 1000;
@@ -155,10 +155,10 @@ pcl::ModelCoefficients FloorExtractor::refine(
     for (int i=0; i<inputCloud->points.size(); i++) {
         PointT point = inputCloud->points[i];
         double distance = pcl::pointToPlaneDistance(point,
-                coefficients->values[0],
-                coefficients->values[1],
-                coefficients->values[2],
-                coefficients->values[3]);
+                coefficients.values[0],
+                coefficients.values[1],
+                coefficients.values[2],
+                coefficients.values[3]);
         if (distance < initialThresh) {
             indices_filtered->indices.push_back(i);
         }
@@ -201,10 +201,10 @@ pcl::ModelCoefficients FloorExtractor::closestPlane(
     for (auto plane : planes) {
 
         double distance = pcl::pointToPlaneDistance(point,
-                coefficients->values[0],
-                coefficients->values[1],
-                coefficients->values[2],
-                coefficients->values[3]);
+                plane.values[0],
+                plane.values[1],
+                plane.values[2],
+                plane.values[3]);
 
         if (distance < closetDistance) {
             closetDistance = distance;
